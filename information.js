@@ -7,7 +7,7 @@ const places = [
     latitude: 25.466218396946577,
     address: "Pentti Kaiteran katu 1, 90570 Oulu",
     picture:
-      "https://pbs.twimg.com/profile_images/1207983328458096640/nSMq6zr5_400x400.png",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/University-of-Oulu-2010.jpg/250px-University-of-Oulu-2010.jpg",
   },
   {
     name: "Rotuaari",
@@ -16,6 +16,8 @@ const places = [
     longitude: 65.01222,
     latitude: 25.4711,
     address: "Kirkkokatu 17, 90100 Oulu",
+    picture:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Kirkkokatu_Oulu_20191229.jpg/250px-Kirkkokatu_Oulu_20191229.jpg",
   },
   {
     name: "Pub Caio",

@@ -60,13 +60,20 @@ function addListItems() {
       businessHrs = places[i]["businesshours"];
     }
 
+    let picture =
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/University-of-Oulu-2010.jpg/250px-University-of-Oulu-2010.jpg";
+
+    if (places[i]["picture"]) {
+      picture = places[i]["picture"];
+    }
+
     let card = `
           <div class="card" style="width: 18rem">
             <div class="card-body">
               <h5 class="card-title">${placeName}</h5>
               <a href="#collapse${i}"data-toggle="collapse">
                 <h5 class ="card-image">
-                <img src ="https://pbs.twimg.com/profile_images/1207983328458096640/nSMq6zr5_400x400.png" height = 200; width = 245;></h5></a>
+                <img src = ${picture} height = 200; width = 245;></h5></a>
               <div id="collapse${i}" class="collapse">
                 <p style="font-size: medium">${description}
                 <br>
