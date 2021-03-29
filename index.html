@@ -1,54 +1,56 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Info Map</title>
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <link href="style.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+      integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+      integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+      crossorigin=""
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+  </head>
 
-<head>
-	<meta charset="utf-8">
-	<title>Display a map on a webpage</title>
-	<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-	<link href="style.css" rel="stylesheet" />
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-		integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-		crossorigin="" />
-	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-		integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-		crossorigin=""></script>
-	<style>
-
-	</style>
-</head>
-
-<body>
-	<div class="leftAndRight">
-		<div class="left-side">
-			<div class="left-flex">
-				<div class="left-up">
-					<h1>Important Places!</h1>
-					<lu class="list-places">
-						<li data-dName="uniOulu">University of Oulu</li>
-						<li data-dName="rotuaari">Rotuaari</li>
-						<li data-dName="pubCaio">Pub Caio</li>
-						<li data-dName="toripoliisi">Toripolliisi</li>
-						<li data-dName="matkahuolto">Matkahuolto</li>
-						<li data-dName="trainStation">Train station</li>
-						<li data-dName="mainLibrary">Main Library</li>
-						<li data-dName="publicTraffic">Public traffic</li>
-						<li data-dName="bikeStuff">Bike stuff</li>
-						<li data-dName="yths">YTHS</li>
-						<li data-dName="teekkaritalo">Teekkaritalo</li>
-					</lu>
-				</div>
-				<div class="left-down">
-					<h2 id="show-chosen">Choose one place</h2>
-					<p id="chosen-information">After choosing you can read information here :)</p>
-					<p id="businessHours"></p>
-				</div>
-			</div>
-		</div>
-		<div id="mapid"></div>
-	</div>
-	<script src="keystore.js"></script>
-	<script src="information.js"></script>
-	<script src="script.js"></script>
-</body>
-
+  <body>
+    <div class="leftAndRight">
+      <div class="left-side">
+        <div class="left-flex">
+          <div class="left-up">
+            <ul class="list-places" id="list-items"></ul>
+          </div>
+        </div>
+      </div>
+      <div id="mapid"></div>
+    </div>
+    <script src="keystore.js"></script>
+    <script src="information.js"></script>
+    <script src="script.js"></script>
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>
