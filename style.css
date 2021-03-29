@@ -1,0 +1,60 @@
+html, body {
+  margin: 0px;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-flow: column wrap;
+}
+
+.leftAndRight {
+  flex: 1 1;
+  order: 2;
+  display: flex;
+}
+
+#mapid {
+  flex: 2;
+}
+
+.list-places {
+  list-style: none;
+}
+
+.list-places li {
+  cursor: pointer;
+  text-align: center;
+  padding-top: 10px;
+  font-size: large;
+}
+
+.list-places li:hover {
+  background-color: rgb(15, 15, 15);
+}
+
+
+.left-side {
+  min-width: 300px;
+  box-sizing: border-box;
+  flex: 0 0 20%;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: rgb(160, 160, 160);
+  background-color: rgb(25, 25, 25);
+  height: 100vh;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(160, 160, 160) rgb(25, 25, 25);
+}
+
+.left-flex {
+  display: flex;
+  flex-flow: column wrap;
+  text-align: center;
+  color: blanchedalmond;
+}
+
+.left-up {
+  padding-bottom: 60px;
+}
