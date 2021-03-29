@@ -1,51 +1,89 @@
-const mymap = L.map('mapid').setView([65.03777732, 25.45506727], 13);
+const mymap = L.map("mapid").setView([65.03777732, 25.45506727], 13);
 
-L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+L.tileLayer(
+  "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",
+  {
+    attribution:
+      'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
-    id: 'mapbox/streets-v11',
+    id: "mapbox/streets-v11",
     tileSize: 512,
     zoomOffset: -1,
-    accessToken: apiKey
-}).addTo(mymap);
+    accessToken: apiKey,
+  }
+).addTo(mymap);
 
-const placeElements = document.querySelectorAll(".list-places li");
-const placeTitle = document.getElementById("show-chosen");
-const placeInformation = document.getElementById("chosen-information");
-const hoursElement = document.getElementById("businessHours");
+const placeElements = new Array();
 
-function addBusinessHours(infor) {
-    if (infor.hasOwnProperty("businesshours")) {
-        hoursElement.innerText = "Business hours:\n" + infor.businesshours; 
-    }
-    else {
-        hoursElement.innerText = "";
-    }
-}
-
-function onMarkerClick(e) {
-    const placeInfor = places[this.placeId];
-    placeTitle.innerText = this.placeName;
-    placeInformation.innerText = placeInfor.text;
-    addBusinessHours(placeInfor);
-}
-
-for (let i = 0; i < placeElements.length; i++) {
+function addInforToCards() {
+  for (let i = 0; i < placeElements.length; i++) {
     const element = placeElements[i];
-    const placeId = element.getAttribute("data-dName");
+    const placeId = places[i];
     const elementInnerHtml = element.innerHTML;
-    const placeInfor = places[placeId];
-    let marker = L.marker([placeInfor.longitude, placeInfor.latitude]).addTo(mymap);
-    marker.placeId = placeId
-    marker.placeName = elementInnerHtml;
-    const popUpText = "<h3>" + elementInnerHtml + "</h3>" + "<p>" + placeInfor.address + "</p>";
+
+    let marker = L.marker([placeId["longitude"], placeId["latitude"]]).addTo(
+      mymap
+    );
+
+    marker.placeId = placeId;
+    marker.placeName = placeId["name"];
+    const popUpText =
+      "<h3>" + placeId["name"] + "</h3>" + "<p>" + placeId["address"] + "</p>";
     marker.bindPopup(popUpText);
-    marker.on('click', onMarkerClick);
-    element.addEventListener("click", function() {
-        marker.openPopup();
-        placeTitle.innerText = elementInnerHtml;
-        placeInformation.innerText = placeInfor.text;
-        mymap.flyTo([placeInfor.longitude, placeInfor.latitude], 16);
-        addBusinessHours(placeInfor);
+
+    marker.addEventListener("click", function () {
+      mymap.flyTo([placeId["longitude"], placeId["latitude"]], 16);
     });
+
+    element.addEventListener("click", function () {
+      marker.openPopup();
+      mymap.flyTo([placeId["longitude"], placeId["latitude"]], 16);
+    });
+  }
 }
+
+function addListItems() {
+  const list = document.getElementById("list-items");
+
+  // Loop through all places
+  for (let i = 0; i < places.length; i++) {
+    // Create list item
+    const listItem = document.createElement("li");
+    const placeName = places[i]["name"];
+    const description = places[i]["text"];
+
+    let businessHrs = "";
+    let businessHrsTitle = "";
+    // Check if business hours exist for place
+    if (places[i]["businesshours"]) {
+      businessHrsTitle = "Business hours";
+      businessHrs = places[i]["businesshours"];
+    }
+
+    let card = `
+          <div class="card" style="width: 18rem">
+            <div class="card-body">
+              <h5 class="card-title">${placeName}</h5>
+              <a href="#collapse${i}"data-toggle="collapse">
+                <h5 class ="card-image">
+                <img src ="https://pbs.twimg.com/profile_images/1207983328458096640/nSMq6zr5_400x400.png" height = 200; width = 245;></h5></a>
+              <div id="collapse${i}" class="collapse">
+                <p style="font-size: medium">${description}
+                <br>
+                <br>
+                <p><i>${businessHrsTitle}</i></p>
+                <p>${businessHrs}</p>
+              </div>
+            </div>
+          </div>
+            `;
+
+    listItem.innerHTML = card;
+    // Append list item to unordered list element
+    list.appendChild(listItem);
+    placeElements.push(listItem);
+  }
+  addInforToCards();
+}
+
+addListItems();
