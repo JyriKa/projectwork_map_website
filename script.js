@@ -71,12 +71,12 @@ function addListItems() {
     }
 
     let card = `
-          <div class="card" style="width: 18rem">
+          <div class="card" style="width: 17rem">
             <div class="card-body">
               <h5 class="card-title">${placeName}</h5>
               <a href="#collapse${i}"data-toggle="collapse">
                 <h5 class ="card-image">
-                <img src = ${picture} alt = "${placeName}" height = 200; width = 245;></h5></a>
+                <img src = ${picture} alt = "${placeName}" height = 175; width = 235;></h5></a>
               <div id="collapse${i}" class="collapse">
                 <p style="font-size: medium">${description}
                 <br>
