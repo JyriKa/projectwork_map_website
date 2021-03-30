@@ -1,3 +1,8 @@
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+var db = firebase.firestore();
+
 const mymap = L.map("mapid").setView([65.03777732, 25.45506727], 13);
 
 L.tileLayer(
@@ -13,16 +18,32 @@ L.tileLayer(
   }
 ).addTo(mymap);
 
-// Add fullscreen and location buttons to map
 mymap.addControl(new L.Control.Fullscreen());
 L.control.locate().addTo(mymap);
 
 const placeElements = new Array();
 
+function updateComments(event) {
+  const placeName = event.target.getAttribute("data-location");
+  console.log(placeName);
+  var list = "";
+  db.collection("comments").where("location", "==", placeName).get()
+      .then((snapshot) => {
+      snapshot.forEach((doc) => {
+        list = list + doc.data().username + " " + doc.data().message + "<br>";
+      })
+      
+
+      document.getElementById(placeName).innerHTML = list;
+    });
+}
+
+
 function addInforToCards() {
   for (let i = 0; i < placeElements.length; i++) {
     const element = placeElements[i];
     const placeId = places[i];
+    const elementInnerHtml = element.innerHTML;
 
     let marker = L.marker([placeId["longitude"], placeId["latitude"]]).addTo(
       mymap
@@ -43,7 +64,7 @@ function addInforToCards() {
       mymap.flyTo([placeId["longitude"], placeId["latitude"]], 16);
     });
   }
-}
+};
 
 function addListItems() {
   const list = document.getElementById("list-items");
@@ -68,7 +89,7 @@ function addListItems() {
 
     if (places[i]["picture"]) {
       picture = places[i]["picture"];
-    }
+    };
 
     let card = `
           <div class="card" style="width: 18rem">
@@ -76,24 +97,75 @@ function addListItems() {
               <h5 class="card-title">${placeName}</h5>
               <a href="#collapse${i}"data-toggle="collapse">
                 <h5 class ="card-image">
-                <img src = ${picture} alt = "${placeName}" height = 200; width = 245;></h5></a>
+                <img src = ${picture} height = 200; width = 245;></h5></a>
               <div id="collapse${i}" class="collapse">
                 <p style="font-size: medium">${description}
                 <br>
                 <br>
                 <p><i>${businessHrsTitle}</i></p>
                 <p>${businessHrs}</p>
+                <button type="button" id="openButton${i}" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal${i}" data-location="${placeName}">Show comments</button>
               </div>
             </div>
           </div>
             `;
 
-    listItem.innerHTML = card;
+
+    let modal = `<div id="myModal${i}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                          <div class="modal-body">
+                            <button id="addComment${i}">POST COMMENT</button>
+                            <form>
+                              <label for="name" style="color:black;">Username:</label><br>
+                              <input type="text" id="username" name="username" ><br>
+                              <label for="comment" style="color:black;">Comment:</label><br>
+                              <input type="text" id="comment" name="comment"><br>
+                            </form>
+                            <p id="${placeName}" style="color:black;"></p>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                          </div>
+                      </div>
+                    </div>
+                  </div>`
+
+    listItem.innerHTML = card + modal;
+    
+    
+
     // Append list item to unordered list element
+
     list.appendChild(listItem);
+
     placeElements.push(listItem);
+
+    const openButton = document.getElementById("openButton" + i);
+    openButton.addEventListener("click", updateComments);
   }
   addInforToCards();
-}
+};
+
+$( document ).ready(function() {
+  for(var i = 0; i < places.length; i++){
+    $("#addComment" + i).on("click", function addComment() {
+      var username = document.getElementById("username").value;
+      var comment = document.getElementById("comment").value;
+      var location = places[i]["name"];
+      if (username != "" && comment != "") {
+        db.collection("comments").add({
+          username: username,
+          comment: comment,
+          location: location
+        })
+        document.forms[0].reset();
+      }
+    });
+  }
+});
 
 addListItems();
