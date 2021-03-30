@@ -103,3 +103,10 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 245, 245, 0.849);
 }
+
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
