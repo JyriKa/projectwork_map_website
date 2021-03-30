@@ -92,7 +92,7 @@ function addListItems() {
     };
 
     let card = `
-          <div class="card" style="width: 18rem">
+          <div class="card" style="width: 17rem">
             <div class="card-body">
               <h5 class="card-title">${placeName}</h5>
               <a href="#collapse${i}"data-toggle="collapse">
