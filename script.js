@@ -61,7 +61,6 @@ function updateComments(event) {
     });
 }
 
-
 function addInforToCards() {
   for (let i = 0; i < placeElements.length; i++) {
     const element = placeElements[i];
@@ -164,8 +163,6 @@ function addListItems() {
 
     listItem.innerHTML = card + modal;
 
-
-
     // Append list item to unordered list element
     list.appendChild(listItem);
 
@@ -176,7 +173,6 @@ function addListItems() {
     openCommentsButton.addEventListener("click", updateComments);
     const addCommentButton = document.getElementById("addComment" + i);
     addCommentButton.addEventListener("click", addComment);
-
   }
   addInforToCards();
 };
