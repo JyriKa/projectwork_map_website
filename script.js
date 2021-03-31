@@ -13,13 +13,16 @@ L.tileLayer(
   }
 ).addTo(mymap);
 
+// Add fullscreen and location buttons to map
+mymap.addControl(new L.Control.Fullscreen());
+L.control.locate().addTo(mymap);
+
 const placeElements = new Array();
 
 function addInforToCards() {
   for (let i = 0; i < placeElements.length; i++) {
     const element = placeElements[i];
     const placeId = places[i];
-    const elementInnerHtml = element.innerHTML;
 
     let marker = L.marker([placeId["longitude"], placeId["latitude"]]).addTo(
       mymap
@@ -68,12 +71,12 @@ function addListItems() {
     }
 
     let card = `
-          <div class="card" style="width: 18rem">
+          <div class="card" style="width: 17rem">
             <div class="card-body">
               <h5 class="card-title">${placeName}</h5>
               <a href="#collapse${i}"data-toggle="collapse">
                 <h5 class ="card-image">
-                <img src = ${picture} height = 200; width = 245;></h5></a>
+                <img src = ${picture} alt = "${placeName}" height = 175; width = 230;></h5></a>
               <div id="collapse${i}" class="collapse">
                 <p style="font-size: medium">${description}
                 <br>
@@ -92,5 +95,13 @@ function addListItems() {
   }
   addInforToCards();
 }
-
 addListItems();
+
+// Collapse others when a card is clicked
+$(document).ready(function () {
+  $(".collapse").on("show.bs.collapse", function () {
+    $(".collapse.show").each(function () {
+      $(this).collapse("hide");
+    });
+  });
+});
