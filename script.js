@@ -40,7 +40,7 @@ function addComment(event) {
     document.getElementById("comment" + i).value = "";
     updateComments(event);
   }
-};
+}
 
 function updateComments(event) {
   const placeName = event.target.getAttribute("data-location");
@@ -81,7 +81,7 @@ function addInforToCards() {
 
     marker.addEventListener("click", function () {
       mymap.flyTo([placeId["longitude"], placeId["latitude"]], 16);
-      element.scrollIntoView({behavior: "smooth", block: "start"});
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
       console.log(marker.collapseIndex);
       $(marker.collapseIndex).collapse("show");
     });
@@ -91,7 +91,7 @@ function addInforToCards() {
       mymap.flyTo([placeId["longitude"], placeId["latitude"]], 16);
     });
   }
-};
+}
 
 function addListItems() {
   const list = document.getElementById("list-items");
@@ -116,7 +116,7 @@ function addListItems() {
 
     if (places[i]["picture"]) {
       picture = places[i]["picture"];
-    };
+    }
 
     const card = `
           <div class="card" style="width: 17rem">
@@ -142,6 +142,7 @@ function addListItems() {
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
+                          <h3 class="modal-title w-100 text-center">${placeName}</h3>
                           <button type="button" class="close" data-dismiss="modal">&times;</button>
                         </div>
                           <div class="modal-body">
@@ -159,7 +160,7 @@ function addListItems() {
                           </div>
                       </div>
                     </div>
-                  </div>`
+                  </div>`;
 
     listItem.innerHTML = card + modal;
 
@@ -175,10 +176,11 @@ function addListItems() {
     addCommentButton.addEventListener("click", addComment);
   }
   addInforToCards();
-};
+}
 
 addListItems();
 
+// Collapse other cards when a card is clicked
 $(document).ready(function () {
   $(".collapse").on("show.bs.collapse", function () {
     $(".collapse.show").each(function () {
