@@ -35,27 +35,45 @@ function addComment(event) {
       timestamp: firebase.firestore.Timestamp.fromDate(new Date()),
       username: username,
       comment: comment,
-      location: placeName
-    })
+      location: placeName,
+    });
     //empties forms and updates comments
     document.getElementById("username" + i).value = "";
     document.getElementById("comment" + i).value = "";
     updateComments(event);
   }
-};
+}
 
 function updateComments(event) {
   const placeName = event.target.getAttribute("data-location");
   let list = "";
   //gets comments by location
-  db.collection("comments").where("location", "==", placeName).get()
+  db.collection("comments")
+    .where("location", "==", placeName)
+    .get()
     .then((snapshot) => {
       snapshot.forEach((doc) => {
         //forms the date and adds comments to a list
         const timestamp = doc.data().timestamp.toDate();
-        const date = timestamp.getDate() + "." + timestamp.getMonth() + "." + timestamp.getFullYear() + " " + timestamp.getHours() + ":" + timestamp.getMinutes();
-        list = list + date + " | " + doc.data().username + " - " + doc.data().comment + "<br>";
-      })
+        const date =
+          timestamp.getDate() +
+          "." +
+          timestamp.getMonth() +
+          "." +
+          timestamp.getFullYear() +
+          " " +
+          timestamp.getHours() +
+          ":" +
+          timestamp.getMinutes();
+        list =
+          list +
+          date +
+          " | " +
+          doc.data().username +
+          " - " +
+          doc.data().comment +
+          "<br>";
+      });
 
       document.getElementById(placeName).innerHTML = list;
     });
@@ -80,7 +98,7 @@ function addInforToCards() {
 
     marker.addEventListener("click", function () {
       mymap.flyTo([placeId["longitude"], placeId["latitude"]], 16);
-      element.scrollIntoView({behavior: "smooth", block: "start"});
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
       console.log(marker.collapseIndex);
       $(marker.collapseIndex).collapse("show");
     });
@@ -90,7 +108,7 @@ function addInforToCards() {
       mymap.flyTo([placeId["longitude"], placeId["latitude"]], 16);
     });
   }
-};
+}
 
 function addListItems() {
   const list = document.getElementById("list-items");
@@ -115,7 +133,7 @@ function addListItems() {
 
     if (places[i]["picture"]) {
       picture = places[i]["picture"];
-    };
+    }
 
     let card = `
           <div class="card" style="width: 17rem">
@@ -136,30 +154,30 @@ function addListItems() {
           </div>
             `;
 
-
-    let modal = `<div id="myModal${i}" class="modal fade" role="dialog">
-                    <div class="modal-dialog">
+    let modal = `<div id="myModal${i}" class="modal" role="dialog">
+                    <div class="modal-dialog" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
+                          <h3 class="modal-title w-100 text-center">${placeName}</h3>
                           <button type="button" class="close" data-dismiss="modal">&times;</button>
                         </div>
                           <div class="modal-body">
-                            <p id="${placeName}" style="color:black;text-align:left;"></p>
-                            
-                            <form>
-                              <label for="name" style="color:black;">Username:</label><br>
-                              <input type="text" id="username${i}" name="username" ><br>
-                              <label for="comment" style="color:black;">Comment:</label><br>
-                              <input type="text" id="comment${i}" name="comment"><br>
-                            </form>
-                            <button type="button" id="addComment${i}" class="btn btn-primary" data-location="${placeName}" i="${i}">POST COMMENT</button>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                          </div>
+                          <p class="comment-form-title"><i>Leave a comment about ${placeName}</i></p>
+                            <div class="comment-form">
+                              <form id="comment-form">
+                                  <input class="input" type="text" placeholder="Name" id="username${i}" name="username" ><br>
+                              </form>
+                              <textarea id="comment${i}" name="comment" placeholder="Comment" form="comment-form"></textarea>
+                              <button type="button" id="addComment${i}" class="btn btn-primary" data-location="${placeName}" i="${i}">Submit</button>
+                            </div>
+                            <h5 id="comment-area-title">Comments about ${placeName}</h5>
+                            <div class="comment-area">
+                              <p class="comment" id="${placeName}" ></p>
+                            </div>
+                          
                       </div>
                     </div>
-                  </div>`
+                  </div>`;
 
     listItem.innerHTML = card + modal;
 
@@ -175,10 +193,11 @@ function addListItems() {
     addCommentButton.addEventListener("click", addComment);
   }
   addInforToCards();
-};
+}
 
 addListItems();
 
+// Collapse other cards when a card is clicked
 $(document).ready(function () {
   $(".collapse").on("show.bs.collapse", function () {
     $(".collapse.show").each(function () {
