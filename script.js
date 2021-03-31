@@ -120,11 +120,7 @@ function addListItems() {
               <h5 class="card-title">${placeName}</h5>
               <a href="#collapse${i}"data-toggle="collapse">
                 <h5 class ="card-image">
-<<<<<<< HEAD
-                <img src = ${picture} height = 200; width = 245;></h5></a>
-=======
                 <img src = ${picture} alt = "${placeName}" height = 175; width = 230;></h5></a>
->>>>>>> 298c1bd3eb8b8dabbe66802a0e647c5684af5572
               <div id="collapse${i}" class="collapse">
                 <p style="font-size: medium">${description}
                 <br>
@@ -179,19 +175,6 @@ function addListItems() {
 
   }
   addInforToCards();
-<<<<<<< HEAD
 };
 
-=======
-}
->>>>>>> 298c1bd3eb8b8dabbe66802a0e647c5684af5572
 addListItems();
-
-// Collapse others when a card is clicked
-$(document).ready(function () {
-  $(".collapse").on("show.bs.collapse", function () {
-    $(".collapse.show").each(function () {
-      $(this).collapse("hide");
-    });
-  });
-});
