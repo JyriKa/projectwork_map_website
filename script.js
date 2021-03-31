@@ -23,16 +23,34 @@ L.control.locate().addTo(mymap);
 
 const placeElements = new Array();
 
+function addComment(event) {
+  const placeName = event.target.getAttribute("data-location");
+  const i = event.target.getAttribute("i");
+  const username = document.getElementById("username" + i).value;
+  const comment = document.getElementById("comment" + i).value;
+  if (username != "" && comment != "") {
+    db.collection("comments").add({
+      timestamp: firebase.firestore.Timestamp.fromDate(new Date()),
+      username: username,
+      comment: comment,
+      location: placeName
+    })
+    document.getElementById("username" + i).value = "";
+    document.getElementById("comment" + i).value = "";
+    updateComments(event);
+  }
+};
+
 function updateComments(event) {
   const placeName = event.target.getAttribute("data-location");
-  console.log(placeName);
-  var list = "";
+  let list = "";
   db.collection("comments").where("location", "==", placeName).get()
-      .then((snapshot) => {
+    .then((snapshot) => {
       snapshot.forEach((doc) => {
-        list = list + doc.data().username + " " + doc.data().message + "<br>";
+        const timestamp = doc.data().timestamp.toDate();
+        const date = timestamp.getDate() + "." + timestamp.getMonth() + "." + timestamp.getFullYear() + " " + timestamp.getHours() + ":" + timestamp.getMinutes();
+        list = list + date + " | " + doc.data().username + " - " + doc.data().comment + "<br>";
       })
-      
 
       document.getElementById(placeName).innerHTML = list;
     });
@@ -118,14 +136,15 @@ function addListItems() {
                           <button type="button" class="close" data-dismiss="modal">&times;</button>
                         </div>
                           <div class="modal-body">
-                            <button id="addComment${i}">POST COMMENT</button>
+                            <p id="${placeName}" style="color:black;text-align:left;"></p>
+                            
                             <form>
                               <label for="name" style="color:black;">Username:</label><br>
-                              <input type="text" id="username" name="username" ><br>
+                              <input type="text" id="username${i}" name="username" ><br>
                               <label for="comment" style="color:black;">Comment:</label><br>
-                              <input type="text" id="comment" name="comment"><br>
+                              <input type="text" id="comment${i}" name="comment"><br>
                             </form>
-                            <p id="${placeName}" style="color:black;"></p>
+                            <button type="button" id="addComment${i}" class="btn btn-primary" data-location="${placeName}" i="${i}">POST COMMENT</button>
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -135,8 +154,8 @@ function addListItems() {
                   </div>`
 
     listItem.innerHTML = card + modal;
-    
-    
+
+
 
     // Append list item to unordered list element
 
@@ -144,28 +163,13 @@ function addListItems() {
 
     placeElements.push(listItem);
 
-    const openButton = document.getElementById("openButton" + i);
-    openButton.addEventListener("click", updateComments);
+    const openCommentsButton = document.getElementById("openButton" + i);
+    openCommentsButton.addEventListener("click", updateComments);
+    const addCommentButton = document.getElementById("addComment" + i);
+    addCommentButton.addEventListener("click", addComment);
+
   }
   addInforToCards();
 };
-
-$( document ).ready(function() {
-  for(var i = 0; i < places.length; i++){
-    $("#addComment" + i).on("click", function addComment() {
-      var username = document.getElementById("username").value;
-      var comment = document.getElementById("comment").value;
-      var location = places[i]["name"];
-      if (username != "" && comment != "") {
-        db.collection("comments").add({
-          username: username,
-          comment: comment,
-          location: location
-        })
-        document.forms[0].reset();
-      }
-    });
-  }
-});
 
 addListItems();
