@@ -30,12 +30,16 @@ function addInforToCards() {
 
     marker.placeId = placeId;
     marker.placeName = placeId["name"];
+    marker.collapseIndex = "#collapse" + i;
     const popUpText =
       "<h3>" + placeId["name"] + "</h3>" + "<p>" + placeId["address"] + "</p>";
     marker.bindPopup(popUpText);
 
     marker.addEventListener("click", function () {
       mymap.flyTo([placeId["longitude"], placeId["latitude"]], 16);
+      element.scrollIntoView({behavior: "smooth", block: "start"});
+      console.log(marker.collapseIndex);
+      $(marker.collapseIndex).collapse("show");
     });
 
     element.addEventListener("click", function () {
@@ -74,7 +78,7 @@ function addListItems() {
           <div class="card" style="width: 17rem">
             <div class="card-body">
               <h5 class="card-title">${placeName}</h5>
-              <a href="#collapse${i}"data-toggle="collapse">
+              <a id="cardPreview${i}" href="#collapse${i}"data-toggle="collapse">
                 <h5 class ="card-image">
                 <img src = ${picture} alt = "${placeName}" height = 175; width = 230;></h5></a>
               <div id="collapse${i}" class="collapse">
