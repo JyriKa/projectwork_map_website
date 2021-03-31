@@ -1,6 +1,5 @@
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-
 var db = firebase.firestore();
 
 const mymap = L.map("mapid").setView([65.03777732, 25.45506727], 13);
@@ -31,12 +30,11 @@ function addComment(event) {
   //doesn't post if forms are empty
   if (username != "" && comment != "") {
     //adds a comment to firestore
-    db.collection("comments").add({
-      timestamp: firebase.firestore.Timestamp.fromDate(new Date()),
+    db.collection(placeName).add({
+      timestamp: new Date().toLocaleString(),
       username: username,
       comment: comment,
-      location: placeName
-    })
+    });
     //empties forms and updates comments
     document.getElementById("username" + i).value = "";
     document.getElementById("comment" + i).value = "";
@@ -46,18 +44,21 @@ function addComment(event) {
 
 function updateComments(event) {
   const placeName = event.target.getAttribute("data-location");
-  let list = "";
-  //gets comments by location
-  db.collection("comments").where("location", "==", placeName).get()
+  let commentText = "";
+  DOMPurify.sanitize(commentText);
+  const commentSection = document.getElementById(placeName);
+  db.collection(placeName).get()
     .then((snapshot) => {
       snapshot.forEach((doc) => {
         //forms the date and adds comments to a list
-        const timestamp = doc.data().timestamp.toDate();
-        const date = timestamp.getDate() + "." + timestamp.getMonth() + "." + timestamp.getFullYear() + " " + timestamp.getHours() + ":" + timestamp.getMinutes();
-        list = list + date + " | " + doc.data().username + " - " + doc.data().comment + "<br>";
+        const docData = doc.data();
+        commentText = docData.timestamp + " | " + docData.username + " - " + docData.comment;
       })
-
-      document.getElementById(placeName).innerHTML = list;
+      const newElement = document.createElement("p");
+      //const clean = DOMPurify.sanitize(commentText);
+      //change commentText --> clean after DOMPurify works
+      newElement.innerText = commentText;
+      commentSection.appendChild(newElement);
     });
 }
 
@@ -117,7 +118,7 @@ function addListItems() {
       picture = places[i]["picture"];
     };
 
-    let card = `
+    const card = `
           <div class="card" style="width: 17rem">
             <div class="card-body">
               <h5 class="card-title">${placeName}</h5>
@@ -137,15 +138,14 @@ function addListItems() {
             `;
 
 
-    let modal = `<div id="myModal${i}" class="modal fade" role="dialog">
+    const modal = `<div id="myModal${i}" class="modal fade" role="dialog">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
                           <button type="button" class="close" data-dismiss="modal">&times;</button>
                         </div>
                           <div class="modal-body">
-                            <p id="${placeName}" style="color:black;text-align:left;"></p>
-                            
+                            <div id="${placeName}" style="color:black;text-align:left;height: 15vh;overflow-y: scroll;overflow-x: hidden;scrollbar-width: thin;"></div>
                             <form>
                               <label for="name" style="color:black;">Username:</label><br>
                               <input type="text" id="username${i}" name="username" ><br>
