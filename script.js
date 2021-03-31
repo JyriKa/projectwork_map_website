@@ -28,13 +28,16 @@ function addComment(event) {
   const i = event.target.getAttribute("i");
   const username = document.getElementById("username" + i).value;
   const comment = document.getElementById("comment" + i).value;
+  //doesn't post if forms are empty
   if (username != "" && comment != "") {
+    //adds a comment to firestore
     db.collection("comments").add({
       timestamp: firebase.firestore.Timestamp.fromDate(new Date()),
       username: username,
       comment: comment,
       location: placeName
     })
+    //empties forms and updates comments
     document.getElementById("username" + i).value = "";
     document.getElementById("comment" + i).value = "";
     updateComments(event);
@@ -44,9 +47,11 @@ function addComment(event) {
 function updateComments(event) {
   const placeName = event.target.getAttribute("data-location");
   let list = "";
+  //gets comments by location
   db.collection("comments").where("location", "==", placeName).get()
     .then((snapshot) => {
       snapshot.forEach((doc) => {
+        //forms the date and adds comments to a list
         const timestamp = doc.data().timestamp.toDate();
         const date = timestamp.getDate() + "." + timestamp.getMonth() + "." + timestamp.getFullYear() + " " + timestamp.getHours() + ":" + timestamp.getMinutes();
         list = list + date + " | " + doc.data().username + " - " + doc.data().comment + "<br>";
@@ -158,11 +163,11 @@ function addListItems() {
 
 
     // Append list item to unordered list element
-
     list.appendChild(listItem);
 
     placeElements.push(listItem);
 
+    //adds functionality to created buttons
     const openCommentsButton = document.getElementById("openButton" + i);
     openCommentsButton.addEventListener("click", updateComments);
     const addCommentButton = document.getElementById("addComment" + i);
