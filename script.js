@@ -45,7 +45,6 @@ function addComment(event) {
 function updateComments(event) {
   const placeName = event.target.getAttribute("data-location");
   let commentText = "";
-  DOMPurify.sanitize(commentText);
   const commentSection = document.getElementById(placeName);
   db.collection(placeName).get()
     .then((snapshot) => {
@@ -55,8 +54,6 @@ function updateComments(event) {
         commentText = docData.timestamp + " | " + docData.username + " - " + docData.comment;
       })
       const newElement = document.createElement("p");
-      //const clean = DOMPurify.sanitize(commentText);
-      //change commentText --> clean after DOMPurify works
       newElement.innerText = commentText;
       commentSection.appendChild(newElement);
     });
