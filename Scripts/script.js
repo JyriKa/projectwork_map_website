@@ -63,26 +63,6 @@ function createCommentBox(username, date, commentBody, index) {
 function updateComments(event) {
   const placeName = event.target.getAttribute("data-location");
   let i = 0;
-
-  //gets comments by location
-  db.collection(placeName)
-    .get()
-    .then((snapshot) => {
-      snapshot.forEach((doc) => {
-        //forms the date and adds comments to a list
-        const timestamp = doc.data().timestamp;
-        const username = doc.data().username;
-        const commentBody = doc.data().comment;
-
-        // TODO prevent adding multiple divs with same comment
-        let commentBox = createCommentBox(username, timestamp, commentBody, i);
-        // Remove spaces from space id, otherwise it won't work
-        const placeId = ("#" + placeName).split(" ").join("");
-        // Append comment box to content-div with jquery
-        $(placeId).append(commentBox);
-        i++;
-      });
-    });
   db.collection(placeName).onSnapshot((snapshot) => {
     snapshot.docChanges().forEach((change) => {
       if (change.type === "added") {
