@@ -42,20 +42,48 @@ function addComment(event) {
   }
 }
 
+function createCommentBox(username, date, commentBody, index) {
+  // TODO prevent adding multiple divs with same comment
+  let commentBox = `
+            <div class="comment-box"">
+              <div class="comment-meta">
+                <div class="comment-user">
+                  <p id="username${index}">${username}</p>
+                </div>
+                <div class="comment_date">
+                  <p id="comment-date${index}">${date}</p>
+                </div>
+              </div>
+              <div class="comment-body">
+                <p id="comment-body${index}">${commentBody}</p>
+              </div>
+            </div>
+      `;
+  return commentBox;
+}
+
 function updateComments(event) {
   const placeName = event.target.getAttribute("data-location");
-  let commentText = "";
-  const commentSection = document.getElementById(placeName);
-  db.collection(placeName).get()
+  let i = 0;
+
+  //gets comments by location
+  db.collection(placeName)
+    .get()
     .then((snapshot) => {
       snapshot.forEach((doc) => {
         //forms the date and adds comments to a list
-        const docData = doc.data();
-        commentText = docData.timestamp + " | " + docData.username + " - " + docData.comment;
-      })
-      const newElement = document.createElement("p");
-      newElement.innerText = commentText;
-      commentSection.appendChild(newElement);
+        const timestamp = doc.data().timestamp;
+        const username = doc.data().username;
+        const commentBody = doc.data().comment;
+
+        // TODO prevent adding multiple divs with same comment
+        let commentBox = createCommentBox(username, timestamp, commentBody, i);
+        // Remove spaces from space id, otherwise it won't work
+        const placeId = ("#" + placeName).split(" ").join("");
+        // Append comment box to content-div with jquery
+        $(placeId).append(commentBox);
+        i++;
+      });
     });
 }
 
@@ -63,7 +91,6 @@ function addInforToCards() {
   for (let i = 0; i < placeElements.length; i++) {
     const element = placeElements[i];
     const placeId = places[i];
-    const elementInnerHtml = element.innerHTML;
 
     let marker = L.marker([placeId["longitude"], placeId["latitude"]]).addTo(
       mymap
@@ -134,34 +161,10 @@ function addListItems() {
           </div>
             `;
 
-
-    const modal = `<div id="myModal${i}" class="modal fade" role="dialog">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h3 class="modal-title w-100 text-center">${placeName}</h3>
-                          <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        </div>
-                          <div class="modal-body">
-                            <div id="${placeName}" style="color:black;text-align:left;height: 15vh;overflow-y: scroll;overflow-x: hidden;scrollbar-width: thin;"></div>
-                            <form>
-                              <label for="name" style="color:black;">Username:</label><br>
-                              <input type="text" id="username${i}" name="username" ><br>
-                              <label for="comment" style="color:black;">Comment:</label><br>
-                              <input type="text" id="comment${i}" name="comment"><br>
-                            </form>
-                            <button type="button" id="addComment${i}" class="btn btn-primary" data-location="${placeName}" i="${i}">POST COMMENT</button>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                          </div>
-                      </div>
-                    </div>
-                  </div>`;
-
-    listItem.innerHTML = card + modal;
+    let modal = createModal(i);
 
     // Append list item to unordered list element
+    listItem.innerHTML = card + modal;
     list.appendChild(listItem);
 
     placeElements.push(listItem);
@@ -172,7 +175,65 @@ function addListItems() {
     const addCommentButton = document.getElementById("addComment" + i);
     addCommentButton.addEventListener("click", addComment);
   }
+
   addInforToCards();
+}
+
+function createModal(i) {
+  // Place to associate modal with
+  const placeName = places[i]["name"];
+  // Place id with no spaces
+  const placeId = placeName.split(" ").join("");
+
+  let modal = `
+    <div id="myModal${i}" class="modal" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title w-100 text-center">${placeName}</h3>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="comment-form-title">
+            <i>Leave a comment about ${placeName}</i>
+          </p>
+          <div class="comment-form">
+            <form id="comment-form">
+              <input
+                class="input"
+                type="text"
+                placeholder="Name"
+                id="username${i}"
+                name="username"
+              /><br />
+            </form>
+            <textarea
+              id="comment${i}"
+              name="comment"
+              placeholder="Comment"
+              form="comment-form"
+            ></textarea>
+            <button
+              type="button"
+              id="addComment${i}"
+              class="btn btn-primary"
+              data-location="${placeName}"
+              i="${i}"
+            >Submit</button>
+          </div>
+          <h5 id="comment-area-title">Comments about ${placeName}</h5>
+          <div class="content" id="${placeId}"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  `;
+
+  // Returns a single modal
+  return modal;
 }
 
 addListItems();
