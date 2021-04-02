@@ -43,17 +43,17 @@ function addComment(event) {
 
 function createCommentBox(username, date, commentBody, index) {
   let commentBox = `
-            <div class="comment-box"">
+            <div class="comment-box" id ="comment-box-${index}">
               <div class="comment-meta">
                 <div class="comment-user">
-                  <p id="username${index}">${username}</p>
+                  <p id="username-${index}"></p>
                 </div>
                 <div class="comment_date">
-                  <p id="comment-date${index}">${date}</p>
+                  <p id="comment-date${index}"></p>
                 </div>
               </div>
               <div class="comment-body">
-                <p id="comment-body${index}">${commentBody}</p>
+                <p id="comment-body${index}"></p>
               </div>
             </div>
       `;
@@ -75,8 +75,16 @@ function updateComments(event) {
         let commentBox = createCommentBox(username, timestamp, commentBody, i);
         // Remove spaces from space id, otherwise it won't work
         const placeId = ("#" + placeName).split(" ").join("");
-        // Append comment box to content-div with jquery
-        $(placeId).append(commentBox);
+
+        // Create new unique comment box
+        if (document.getElementById("comment-box-" + i) === null) {
+          // Append comment box to specific place
+          $(placeId).append(commentBox);
+          // Append text elements to comment box
+          $("#username-" + i).text(username);
+          $("#comment-date" + i).text(timestamp);
+          $("#comment-body" + i).text(commentBody);
+        }
         i++;
       }
     });
