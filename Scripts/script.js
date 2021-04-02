@@ -41,19 +41,19 @@ function addComment(event) {
   }
 }
 
-function createCommentBox(username, date, commentBody, index) {
+function createCommentBox(placeId, username, date, commentBody, index) {
   let commentBox = `
             <div class="comment-box" id ="comment-box-${index}">
               <div class="comment-meta">
                 <div class="comment-user">
-                  <p id="username-${index}"></p>
+                  <p id="${placeId}username${index}"></p>
                 </div>
                 <div class="comment_date">
-                  <p id="comment-date${index}"></p>
+                  <p id="${placeId}comment-date${index}"></p>
                 </div>
               </div>
               <div class="comment-body">
-                <p id="comment-body${index}"></p>
+                <p id="${placeId}comment-body${index}"></p>
               </div>
             </div>
       `;
@@ -75,18 +75,18 @@ function updateComments(event) {
         const username = docData.username;
         const commentBody = docData.comment;
 
-        // TODO prevent adding multiple divs with same comment
-        let commentBox = createCommentBox(username, timestamp, commentBody, i);
         // Remove spaces from space id, otherwise it won't work
-        const placeId = ("#" + placeName).split(" ").join("");
+        const placeId = (placeName).split(" ").join("");
+
+        let commentBox = createCommentBox(placeId, username, timestamp, commentBody, i);
 
         // Create new unique comment box
         // Append comment box to specific place
-        $(placeId).append(commentBox);
+        $("#" + placeId).append(commentBox);
         // Append text elements to comment box
-        $("#username-" + i).text(username);
-        $("#comment-date" + i).text(timestamp);
-        $("#comment-body" + i).text(commentBody);
+        $("#" + placeId + "username" + i).text(username);
+        $("#" + placeId + "comment-date" + i).text(timestamp);
+        $("#" + placeId + "comment-body" + i).text(commentBody);
         i++;
       }
     });
