@@ -28,7 +28,7 @@ function addComment(event) {
   const username = document.getElementById("username" + i).value;
   const comment = document.getElementById("comment" + i).value;
   //doesn't post if forms are empty
-  if (username != "" && comment != "") {
+  if (username !== "" && comment !== "") {
     //adds a comment to firestore
     db.collection(placeName).add({
       timestamp: new Date().toLocaleString(),
@@ -61,7 +61,11 @@ function createCommentBox(username, date, commentBody, index) {
 }
 
 function updateComments(event) {
-  const placeName = event.target.getAttribute("data-location");
+  const clickedElement = event.target;
+  if (clickedElement.getAttribute("data-listening") !== null) return;
+
+  clickedElement.setAttribute("data-listening", "listening");
+  const placeName = clickedElement.getAttribute("data-location");
   let i = 0;
   db.collection(placeName).onSnapshot((snapshot) => {
     snapshot.docChanges().forEach((change) => {
@@ -77,14 +81,12 @@ function updateComments(event) {
         const placeId = ("#" + placeName).split(" ").join("");
 
         // Create new unique comment box
-        if (document.getElementById("comment-box-" + i) === null) {
-          // Append comment box to specific place
-          $(placeId).append(commentBox);
-          // Append text elements to comment box
-          $("#username-" + i).text(username);
-          $("#comment-date" + i).text(timestamp);
-          $("#comment-body" + i).text(commentBody);
-        }
+        // Append comment box to specific place
+        $(placeId).append(commentBox);
+        // Append text elements to comment box
+        $("#username-" + i).text(username);
+        $("#comment-date" + i).text(timestamp);
+        $("#comment-body" + i).text(commentBody);
         i++;
       }
     });
