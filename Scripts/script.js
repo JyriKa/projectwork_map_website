@@ -28,7 +28,7 @@ function addComment(event) {
   const username = document.getElementById("username" + i).value;
   const comment = document.getElementById("comment" + i).value;
   //doesn't post if forms are empty
-  if (username !== "" && comment !== "") {
+  if (username != "" && comment != "") {
     //adds a comment to firestore
     db.collection(placeName).add({
       timestamp: new Date().toLocaleString(),
@@ -46,14 +46,14 @@ function createCommentBox(username, date, commentBody, index) {
             <div class="comment-box"">
               <div class="comment-meta">
                 <div class="comment-user">
-                <p id="username-${index}"></p>
+                  <p id="username${index}">${username}</p>
                 </div>
                 <div class="comment_date">
-                  <p id="comment-date${index}"></p>
+                  <p id="comment-date${index}">${date}</p>
                 </div>
               </div>
               <div class="comment-body">
-                <p id="comment-body${index}"></p>
+                <p id="comment-body${index}">${commentBody}</p>
               </div>
             </div>
       `;
@@ -61,11 +61,7 @@ function createCommentBox(username, date, commentBody, index) {
 }
 
 function updateComments(event) {
-  const clickedElement = event.target;
-  if (clickedElement.getAttribute("data-isListening") !== null) return;
-
-  clickedElement.setAttribute("data-isListening", "listening");
-  const placeName = clickedElement.getAttribute("data-location");
+  const placeName = event.target.getAttribute("data-location");
   let i = 0;
   db.collection(placeName).onSnapshot((snapshot) => {
     snapshot.docChanges().forEach((change) => {
@@ -80,11 +76,7 @@ function updateComments(event) {
         // Remove spaces from space id, otherwise it won't work
         const placeId = ("#" + placeName).split(" ").join("");
         // Append comment box to content-div with jquery
-
         $(placeId).append(commentBox);
-        $("#username-" + i).text(username);
-        $("#comment-date" + i).text(timestamp);
-        $("#comment-body" + i).text(commentBody);
         i++;
       }
     });
