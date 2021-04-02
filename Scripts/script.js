@@ -35,14 +35,13 @@ function addComment(event) {
       username: username,
       comment: comment,
     });
-    //empties forms and updates comments
+    //empties forms
     document.getElementById("username" + i).value = "";
     document.getElementById("comment" + i).value = "";
   }
 }
 
 function createCommentBox(username, date, commentBody, index) {
-  // TODO prevent adding multiple divs with same comment
   let commentBox = `
             <div class="comment-box"">
               <div class="comment-meta">
