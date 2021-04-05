@@ -7,7 +7,7 @@ const places = [
     latitude: 25.466218396946577,
     address: "Pentti Kaiteran katu 1, 90570 Oulu",
     picture:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/University-of-Oulu-2010.jpg/250px-University-of-Oulu-2010.jpg",
+      "./pictures/uni_entrance.jpg",
   },
   {
     name: "Rotuaari",
@@ -27,6 +27,8 @@ const places = [
     latitude: 25.47850004112316,
     address: "Sammonkatu 10, 90570 Oulu",
     businesshours: "Tuesday-Saturday: 6pm-1am",
+    picture:
+      "./pictures/caio_entrance.jpg",
   },
   {
     name: "Toripolliisi",
@@ -91,6 +93,8 @@ const places = [
     latitude: 25.471201639275847,
     address: "Yliopistokatu 1, 90570 Oulu",
     businesshours: "Monday-Thursday: 8am-3pm\nFriday: 8am-2pm",
+    picture:
+      "./pictures/yths_entrance.jpg",
   },
   {
     name: "Teekkaritalo",
@@ -99,5 +103,27 @@ const places = [
     longitude: 65.06384497095632,
     latitude: 25.483870212287922,
     address: "Kalervontie 7, 90570 Oulu",
+  },
+  {
+    name: "Ape house",
+    text:
+      "Ape house or 'Apinatalo' is a nickname given to the PSOAS apartment house next to Kaijonharju ape statue. It has particular fame due to its penthouse hobby room, which is one of the most affordable event locations to rent for a moderately sized group of people. It is even cheaper for people who already live in the building, and who coincidentally can also unlock the saunas next to the hobby room. This 'inside man' arrangement makes it the cheapest rentable sauna location.",
+    longitude: 65.06073332629437, 
+    latitude: 25.479424593936216,
+    picture:
+      "./pictures/ape_house_entrance.jpg",
+
+    address: "Tellervontie 2A, 90570 Oulu",
+  },
+  {
+    name: "Club Sixteen",
+    text:
+      "The 'Club Sixteen' is a very informal name for the apartment house of Yliopistokatu 16, due to its notorious history of serving as a crazy party house for international students.",
+    longitude: 65.06073332629437, 
+    latitude: 25.479424593936216,
+    picture:
+      "./pictures/club_sixteen.jpg",
+
+    address: "Yliopistokatu 16, 90570 Oulu",
   },
 ];
