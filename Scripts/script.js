@@ -65,7 +65,10 @@ function updateComments(event) {
   if (clickedElement.getAttribute("data-listening") !== null) return;
 
   clickedElement.setAttribute("data-listening", "listening");
+
   const placeName = clickedElement.getAttribute("data-location");
+  // Remove spaces from place id, otherwise it won't work
+  const placeId = placeName.split(" ").join("");
   let i = 0;
   db.collection(placeName).onSnapshot((snapshot) => {
     snapshot.docChanges().forEach((change) => {
@@ -75,10 +78,13 @@ function updateComments(event) {
         const username = docData.username;
         const commentBody = docData.comment;
 
-        // Remove spaces from space id, otherwise it won't work
-        const placeId = (placeName).split(" ").join("");
-
-        let commentBox = createCommentBox(placeId, username, timestamp, commentBody, i);
+        let commentBox = createCommentBox(
+          placeId,
+          username,
+          timestamp,
+          commentBody,
+          i
+        );
 
         // Create new unique comment box
         // Append comment box to specific place
@@ -88,6 +94,10 @@ function updateComments(event) {
         $("#" + placeId + "comment-date" + i).text(timestamp);
         $("#" + placeId + "comment-body" + i).text(commentBody);
         i++;
+      }
+      // Remove no comments text if there are comments
+      if (document.getElementById(placeId) !== null) {
+        $("#noComments-" + placeId).text("");
       }
     });
   });
@@ -230,7 +240,7 @@ function createModal(i) {
             >Submit</button>
           </div>
           <h5 id="comment-area-title">Comments about ${placeName}</h5>
-          <div class="content" id="${placeId}"></div>
+          <div class="content" id="${placeId}"><p id="noComments-${placeId}">No comments yet!</p></div>
           </div>
         </div>
       </div>
