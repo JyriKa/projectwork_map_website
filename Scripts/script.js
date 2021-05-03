@@ -120,6 +120,9 @@ function addInforToCards() {
     marker.bindPopup(popUpText);
 
     marker.addEventListener("click", function () {
+      if ($("#list-items").css("display") == "none") {
+        swapTab();
+      };
       mymap.flyTo([placeId["longitude"], placeId["latitude"]], 16);
       element.scrollIntoView({ behavior: "smooth", block: "start" });
       console.log(marker.collapseIndex);
@@ -252,7 +255,173 @@ function createModal(i) {
   return modal;
 }
 
+function updateEvents() {
+
+  var starIcon = L.icon({
+    iconUrl: './pictures/marker.png',
+    iconSize: [25, 42], // size of the icon
+  });
+  let i = 0;
+  const list = document.getElementById("events");
+
+  db.collection("Events").onSnapshot((snapshot) => {
+    snapshot.docChanges().forEach((event) => {
+
+      const docData = event.doc.data();
+      const eventName = docData.name;
+      const eventDescription = docData.description;
+      const longitude = docData.latitude;
+      const latitude = docData.longitude;
+      const timestamp = new Date(docData.timestamp).toLocaleString();
+
+      const listItem = document.createElement("li");
+      const card = `
+          <div class="card" style="width: 17rem">
+            <div class="card-body" href="#eventCollapse${i}"data-toggle="collapse">
+              <h5 class="card-title">${eventName}</h5>
+              <div id="eventCollapse${i}" class="collapse">
+                <p style="font-size: medium">${timestamp}
+                <p style="font-size: medium">${eventDescription}
+                <br>
+              </div>
+            </div>
+          </div>
+            `;
+      listItem.innerHTML = card;
+
+      let marker = L.marker([longitude, latitude], { icon: starIcon }).addTo(
+        mymap
+      );
+
+      marker.placeName = eventName;
+      marker.collapseIndex = "#eventCollapse" + i;
+      const popUpText =
+        "<h3>" + eventName + "</h3>" + "<p>" + eventDescription + "</p>";
+      marker.bindPopup(popUpText);
+
+      marker.addEventListener("click", function () {
+        if ($("#events").css("display") == "none") {
+          swapTab();
+        }; mymap.flyTo([longitude, latitude], 16);
+        listItem.scrollIntoView({ behavior: "smooth", block: "start" });
+        console.log(marker.collapseIndex);
+        $(marker.collapseIndex).collapse("show");
+      });
+
+      listItem.addEventListener("click", function () {
+        marker.openPopup();
+        mymap.flyTo([longitude, latitude], 16);
+      });
+
+      list.appendChild(listItem);
+      i++;
+    });
+  });
+}
+
 addListItems();
+updateEvents();
+
+function swapTab() {
+  if ($(".left-side").css("background-image") == "linear-gradient(135deg, rgb(171, 220, 255) 10%, rgb(3, 150, 255) 100%)") {
+    $(".left-side").css("background-image", "linear-gradient(135deg, #FFC0CB 10%, #FF748C 100%)");
+  } else {
+    $(".left-side").css("background-image", "linear-gradient(135deg, #abdcff 10%, #0396ff 100%)");
+  }
+  $("#list-items").toggle(300);
+  $("#events").toggle(300);
+}
+
+function selectCoordinates() {
+  $('#eventWindow').modal('hide');
+  $('.toast').toast('show');
+  let active = true;
+  document.getElementById("mapid").style.cursor = "crosshair";
+  mymap.addEventListener('click', function (e) {
+    if (active) {
+      let coord = e.latlng;
+      let lat = coord.lat;
+      let lng = coord.lng;
+      $("#latitude").text(lat);
+      $("#longitude").text(lng);
+      $('#eventWindow').modal('show');
+      active = false;
+      document.getElementById("mapid").style.cursor = "auto";
+    }
+  }, { once: true });
+}
+
+function addEvent() {
+  const eventName = document.getElementById("eventName").value;
+  const eventDescription = document.getElementById("eventDescription").value;
+  const longitude = document.getElementById("longitude").innerHTML;
+  const latitude = document.getElementById("latitude").innerHTML;
+  const timestamp = document.getElementById("meeting-time").value;
+
+  //doesn't post if forms are empty
+  if (eventName !== "" && eventDescription !== "" && longitude !== "" && latitude !== "") {
+    //adds a comment to firestore
+    db.collection("Events").add({
+      name: eventName,
+      description: eventDescription,
+      longitude: longitude,
+      latitude: latitude,
+      timestamp: timestamp,
+    });
+    //empties forms
+    document.getElementById("eventName").value = "";
+    document.getElementById("eventDescription").value = "";
+    document.getElementById("longitude").innerHTML = "";
+    document.getElementById("latitude").innerHTML = "";
+    $('#eventWindow').modal('hide');
+  }
+}
+
+
+$("#addEvent").append(`
+<div class="modal fade" id="eventWindow" tabindex="-1" role="dialog" aria-labelledby="eventWindowLabel" aria-hidden="true">
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="eventWindow">Add new event</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+  </div>
+    <div class="modal-body">
+      <div class="event-form">
+      <form id="event-form">
+        <input
+        class="input"
+        type="text"
+        id="eventName"
+        placeholder="Name of event"
+        name="Name of event"
+        /><br />
+      </form>
+      <div id="latitude" style="color: black"></div>
+      <div id="longitude" style="color: black"></div>
+      <button class="btn btn-primary btn-sm" onclick="selectCoordinates()">Select location</button>
+      <br>
+      <input type="datetime-local" id="meeting-time"
+       name="meeting-time" value="2021-06-12T19:30"
+       min="2021-04-07T00:00" max="2030-06-14T00:00">
+      <textarea
+        name="event"
+        id="eventDescription"
+        placeholder="Description"
+        form="event-form"
+      ></textarea>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm"
+        onclick="addEvent()"
+      >Submit</button>
+    </div>
+      </div>
+    </div>
+</div>
+</div>`);
 
 // Collapse other cards when a card is clicked
 $(document).ready(function () {
@@ -262,3 +431,4 @@ $(document).ready(function () {
     });
   });
 });
+
