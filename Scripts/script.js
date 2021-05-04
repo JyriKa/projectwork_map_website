@@ -323,21 +323,28 @@ function updateEvents() {
 addListItems();
 updateEvents();
 
-// Disable locations button when website is opened
-document.getElementById("showLocationsButton").disabled = true;
-
 function showLocations() {
   $("#list-items").toggle(300);
   $("#events").toggle(300);
-  document.getElementById("showLocationsButton").disabled = true;
-  document.getElementById("showEventsButton").disabled = false;
+
+  // Remove active and disabled class from other navbar item
+  $(".navbar-nav").find(".active").removeClass("active");
+  $(".navbar-nav").find(".disabled").removeClass("disabled");
+  // Disable this nav item by adding active and disabled class to navbar item
+  $("#showLocations").addClass("active");
+  $("#showLocations").addClass("disabled");
 }
 
 function showEvents() {
   $("#list-items").toggle(300);
   $("#events").toggle(300);
-  document.getElementById("showLocationsButton").disabled = false;
-  document.getElementById("showEventsButton").disabled = true;
+
+  // Remove active and disabled class from other navbar item
+  $(".navbar-nav").find(".active").removeClass("active");
+  $(".navbar-nav").find(".disabled").removeClass("disabled");
+  // Disable this nav item by adding active and disabled class to navbar item
+  $("#showEvents").addClass("active");
+  $("#showEvents").addClass("disabled");
 }
 
 function selectCoordinates() {
