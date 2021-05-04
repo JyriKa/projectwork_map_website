@@ -271,12 +271,14 @@ function updateEvents() {
       const longitude = docData.latitude;
       const latitude = docData.longitude;
       const timestamp = new Date(docData.timestamp).toLocaleString();
+      const date = timestamp.split(" ")[0];
 
       const listItem = document.createElement("li");
       const card = `
           <div class="card" style="width: 17rem">
             <div class="card-body" href="#collapse${i}"data-toggle="collapse">
-              <h5 class="card-title">${eventName}</h5>
+              <div class="card-title"><h5>${date}</h3><h3>${eventName}</h3>
+              </div>
               <div id="collapse${i}" class="collapse">
                 <p style="font-size: medium">${timestamp}
                 <p style="font-size: medium">${eventDescription}
