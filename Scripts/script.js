@@ -122,7 +122,7 @@ function addInforToCards() {
     marker.addEventListener("click", function () {
       if ($("#list-items").css("display") == "none") {
         swapTab();
-      };
+      }
       mymap.flyTo([placeId["longitude"], placeId["latitude"]], 16);
       element.scrollIntoView({ behavior: "smooth", block: "start" });
       console.log(marker.collapseIndex);
@@ -256,9 +256,8 @@ function createModal(i) {
 }
 
 function updateEvents() {
-
   var starIcon = L.icon({
-    iconUrl: './pictures/marker.png',
+    iconUrl: "./pictures/marker.png",
     iconSize: [25, 42], // size of the icon
   });
   let i = 0;
@@ -266,7 +265,6 @@ function updateEvents() {
 
   db.collection("Events").onSnapshot((snapshot) => {
     snapshot.docChanges().forEach((event) => {
-
       const docData = event.doc.data();
       const eventName = docData.name;
       const eventDescription = docData.description;
@@ -302,7 +300,8 @@ function updateEvents() {
       marker.addEventListener("click", function () {
         if ($("#events").css("display") == "none") {
           swapTab();
-        }; mymap.flyTo([longitude, latitude], 16);
+        }
+        mymap.flyTo([longitude, latitude], 16);
         listItem.scrollIntoView({ behavior: "smooth", block: "start" });
         console.log(marker.collapseIndex);
         $(marker.collapseIndex).collapse("show");
@@ -322,33 +321,46 @@ function updateEvents() {
 addListItems();
 updateEvents();
 
-function swapTab() {
-  if ($(".left-side").css("background-image") == "linear-gradient(135deg, rgb(171, 220, 255) 10%, rgb(3, 150, 255) 100%)") {
-    $(".left-side").css("background-image", "linear-gradient(135deg, #FFC0CB 10%, #FF748C 100%)");
-  } else {
-    $(".left-side").css("background-image", "linear-gradient(135deg, #abdcff 10%, #0396ff 100%)");
-  }
+// Disable locations button when website is opened
+document.getElementById("showLocationsButton").disabled = true;
+
+function showLocations() {
   $("#list-items").toggle(300);
   $("#events").toggle(300);
+  document.getElementById("showLocationsButton").disabled = true;
+  document.getElementById("showEventsButton").disabled = false;
+}
+
+function showEvents() {
+  $("#list-items").toggle(300);
+  $("#events").toggle(300);
+  document.getElementById("showLocationsButton").disabled = false;
+  document.getElementById("showEventsButton").disabled = true;
 }
 
 function selectCoordinates() {
-  $('#eventWindow').modal('hide');
-  $('.toast').toast('show');
+  $("#eventWindow").modal("hide");
+  $(".toast").toast("show");
   let active = true;
-  document.getElementById("mapid").style.cursor = "crosshair";
-  mymap.addEventListener('click', function (e) {
-    if (active) {
-      let coord = e.latlng;
-      let lat = coord.lat;
-      let lng = coord.lng;
-      $("#latitude").text(lat);
-      $("#longitude").text(lng);
-      $('#eventWindow').modal('show');
-      active = false;
-      document.getElementById("mapid").style.cursor = "auto";
-    }
-  }, { once: true });
+  document.getElementById("mapid").style.cursor =
+    "url('/pictures/pin_icon.svg'), auto";
+
+  mymap.addEventListener(
+    "click",
+    function (e) {
+      if (active) {
+        let coord = e.latlng;
+        let lat = coord.lat;
+        let lng = coord.lng;
+        $("#latitude").text(lat);
+        $("#longitude").text(lng);
+        $("#eventWindow").modal("show");
+        active = false;
+        document.getElementById("mapid").style.cursor = "auto";
+      }
+    },
+    { once: true }
+  );
 }
 
 function addEvent() {
@@ -359,7 +371,12 @@ function addEvent() {
   const timestamp = document.getElementById("meeting-time").value;
 
   //doesn't post if forms are empty
-  if (eventName !== "" && eventDescription !== "" && longitude !== "" && latitude !== "") {
+  if (
+    eventName !== "" &&
+    eventDescription !== "" &&
+    longitude !== "" &&
+    latitude !== ""
+  ) {
     //adds a comment to firestore
     db.collection("Events").add({
       name: eventName,
@@ -373,22 +390,22 @@ function addEvent() {
     document.getElementById("eventDescription").value = "";
     document.getElementById("longitude").innerHTML = "";
     document.getElementById("latitude").innerHTML = "";
-    $('#eventWindow').modal('hide');
+    $("#eventWindow").modal("hide");
   }
 }
-
 
 $("#addEvent").append(`
 <div class="modal fade" id="eventWindow" tabindex="-1" role="dialog" aria-labelledby="eventWindowLabel" aria-hidden="true">
 <div class="modal-dialog" role="document">
   <div class="modal-content">
     <div class="modal-header">
-      <h5 class="modal-title" id="eventWindow">Add new event</h5>
+      <h3 class="modal-title w-100 text-center id="eventWindow>Add new event</h3>
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
   </div>
     <div class="modal-body">
+    <p class="event-title"><i>Add a new event to your chosen location</i></p>
       <div class="event-form">
       <form id="event-form">
         <input
@@ -401,8 +418,8 @@ $("#addEvent").append(`
       </form>
       <div id="latitude" style="color: black"></div>
       <div id="longitude" style="color: black"></div>
-      <button class="btn btn-primary btn-sm" onclick="selectCoordinates()">Select location</button>
-      <br>
+      <button class="eventButtons btn btn-primary" onclick="selectCoordinates()">Select location</button>
+      <p id="eventDateText">Event date</p>
       <input type="datetime-local" id="meeting-time"
        name="meeting-time" value="2021-06-12T19:30"
        min="2021-04-07T00:00" max="2030-06-14T00:00">
@@ -414,7 +431,7 @@ $("#addEvent").append(`
       ></textarea>
       <button
         type="button"
-        class="btn btn-primary btn-sm"
+        class="eventButtons btn btn-primary" 
         onclick="addEvent()"
       >Submit</button>
     </div>
@@ -431,4 +448,3 @@ $(document).ready(function () {
     });
   });
 });
-
