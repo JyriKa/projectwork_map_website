@@ -326,6 +326,7 @@ updateEvents();
 function showLocations() {
   $("#list-items").toggle(300);
   $("#events").toggle(300);
+  $("#eventButton").toggle(300);
 
   // Remove active and disabled class from other navbar item
   $(".navbar-nav").find(".active").removeClass("active");
@@ -338,6 +339,7 @@ function showLocations() {
 function showEvents() {
   $("#list-items").toggle(300);
   $("#events").toggle(300);
+  $("#eventButton").toggle(300);
 
   // Remove active and disabled class from other navbar item
   $(".navbar-nav").find(".active").removeClass("active");
