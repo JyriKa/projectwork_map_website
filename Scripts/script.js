@@ -276,7 +276,7 @@ function updateEvents() {
       const listItem = document.createElement("li");
       const card = `
           <div class="card" style="width: 17rem">
-            <div class="card-body" href="#collapse${i}"data-toggle="collapse">
+            <div class="card-body event-card" href="#collapse${i}"data-toggle="collapse">
               <div class="card-title"><h5>${date}</h3><h3>${eventName}</h3>
               </div>
               <div id="collapse${i}" class="collapse">
