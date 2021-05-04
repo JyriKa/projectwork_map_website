@@ -103,6 +103,8 @@ const places = [
     longitude: 65.06384497095632,
     latitude: 25.483870212287922,
     address: "Kalervontie 7, 90570 Oulu",
+    picture:
+      "./pictures/teekkaritalo.jpg",
   },
   {
     name: "Ape house",
