@@ -7,6 +7,7 @@ body {
 body {
   display: flex;
   flex-flow: column wrap;
+  overflow: hidden;
 }
 
 p {
@@ -40,8 +41,8 @@ p {
   flex: 0 0 10%;
   padding-right: 10px;
   background-image: linear-gradient(135deg, #abdcff 10%, #0396ff 100%);
-  height: 100vh;
-  overflow-y: scroll;
+  height: 95vh;
+  overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: rgb(160, 160, 160) rgb(25, 25, 25);
@@ -109,4 +110,26 @@ p {
   top: 0;
   bottom: 0;
   width: 100%;
+}
+.navbar {
+  background: -webkit-linear-gradient(
+    to right,
+    #2e9de7,
+    #334658
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #3084bd,
+    #5881a8
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+.navBarButton {
+  margin-left: 35px;
+  width: 100px;
+  height: 40px;
+  background-color: #008cba;
+}
+
+#eventButton {
+  margin-top: 15px;
 }
