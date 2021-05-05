@@ -276,7 +276,7 @@ function updateEvents() {
       const listItem = document.createElement("li");
       const card = `
           <div class="card" style="width: 17rem">
-            <div class="card-body" href="#collapse${i}"data-toggle="collapse">
+            <div class="card-body event-card" href="#collapse${i}"data-toggle="collapse">
               <div class="card-title"><h5>${date}</h3><h3>${eventName}</h3>
               </div>
               <div id="collapse${i}" class="collapse">
@@ -323,21 +323,30 @@ function updateEvents() {
 addListItems();
 updateEvents();
 
-// Disable locations button when website is opened
-document.getElementById("showLocationsButton").disabled = true;
-
 function showLocations() {
   $("#list-items").toggle(300);
   $("#events").toggle(300);
-  document.getElementById("showLocationsButton").disabled = true;
-  document.getElementById("showEventsButton").disabled = false;
+  $("#eventButton").toggle(300);
+
+  // Remove active and disabled class from other navbar item
+  $(".navbar-nav").find(".active").removeClass("active");
+  $(".navbar-nav").find(".disabled").removeClass("disabled");
+  // Disable this nav item by adding active and disabled class to navbar item
+  $("#showLocations").addClass("active");
+  $("#showLocations").addClass("disabled");
 }
 
 function showEvents() {
   $("#list-items").toggle(300);
   $("#events").toggle(300);
-  document.getElementById("showLocationsButton").disabled = false;
-  document.getElementById("showEventsButton").disabled = true;
+  $("#eventButton").toggle(300);
+
+  // Remove active and disabled class from other navbar item
+  $(".navbar-nav").find(".active").removeClass("active");
+  $(".navbar-nav").find(".disabled").removeClass("disabled");
+  // Disable this nav item by adding active and disabled class to navbar item
+  $("#showEvents").addClass("active");
+  $("#showEvents").addClass("disabled");
 }
 
 function selectCoordinates() {

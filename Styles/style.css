@@ -123,13 +123,17 @@ p {
     #5881a8
   ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
-.navBarButton {
-  margin-left: 35px;
-  width: 100px;
-  height: 40px;
-  background-color: #008cba;
+.nav-link {
+  font-size: larger;
+}
+.navbar-nav a.active {
+  font-weight: bold;
 }
 
 #eventButton {
   margin-top: 15px;
+  width: 265px;
+  height: 45px;
+  margin-left: 15px;
+  position: sticky;
 }
