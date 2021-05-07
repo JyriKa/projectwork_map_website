@@ -4,6 +4,8 @@ var db = firebase.firestore();
 
 const mymap = L.map("mapid").setView([65.03777732, 25.45506727], 13);
 
+let tempMarker;
+
 L.tileLayer(
   "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",
   {
@@ -120,9 +122,6 @@ function addInforToCards() {
     marker.bindPopup(popUpText);
 
     marker.addEventListener("click", function () {
-      if ($("#list-items").css("display") == "none") {
-        swapTab();
-      }
       mymap.flyTo([placeId["longitude"], placeId["latitude"]], 16);
       element.scrollIntoView({ behavior: "smooth", block: "start" });
       console.log(marker.collapseIndex);
@@ -256,22 +255,31 @@ function createModal(i) {
 }
 
 function updateEvents() {
-  var starIcon = L.icon({
+  let eventMarkerIcon = L.icon({
     iconUrl: "./pictures/marker.png",
     iconSize: [25, 42], // size of the icon
   });
   let i = 0;
   const list = document.getElementById("events");
 
-  db.collection("Events").onSnapshot((snapshot) => {
+  db.collection("Events").where("timestamp", ">", firebase.firestore.Timestamp.now()).onSnapshot((snapshot) => {
     snapshot.docChanges().forEach((event) => {
       const docData = event.doc.data();
-      const eventName = docData.name;
-      const eventDescription = docData.description;
-      const longitude = docData.latitude;
-      const latitude = docData.longitude;
-      const timestamp = new Date(docData.timestamp).toLocaleString();
+      let eventName = docData.name;
+      let eventDescription = docData.description;
+      const timestamp = docData.timestamp.toDate().toLocaleString();
       const date = timestamp.split(" ")[0];
+      let longitude = docData.latitude;
+      let latitude = docData.longitude;
+      if(isNaN(longitude) && isNaN(latitude)){
+        longitude = 65.0115;
+        latitude = 25.468;
+        ;
+      }
+      eventName = eventName.replace(/\s|\n|&nbsp;/g, ' ');
+      eventName = eventName.replace(/<[^>]+>/gm, '');
+      eventDescription = eventDescription.replace(/\s|\n|&nbsp;/g, ' ');
+      eventDescription = eventDescription.replace(/<[^>]+>/gm, '');
 
       const listItem = document.createElement("li");
       const card = `
@@ -289,20 +297,18 @@ function updateEvents() {
             `;
       listItem.innerHTML = card;
 
-      let marker = L.marker([longitude, latitude], { icon: starIcon }).addTo(
+      let marker = L.marker([longitude, latitude], { icon: eventMarkerIcon }).addTo(
         mymap
       );
 
       marker.placeName = eventName;
       marker.collapseIndex = "#eventCollapse" + i;
       const popUpText =
-        "<h3>" + eventName + "</h3>" + "<p>" + eventDescription + "</p>";
+        `<h3>${eventName}</h3>
+        <p">${eventDescription}</p>`;
       marker.bindPopup(popUpText);
 
       marker.addEventListener("click", function () {
-        if ($("#events").css("display") == "none") {
-          swapTab();
-        }
         mymap.flyTo([longitude, latitude], 16);
         listItem.scrollIntoView({ behavior: "smooth", block: "start" });
         console.log(marker.collapseIndex);
@@ -350,9 +356,16 @@ function showEvents() {
 }
 
 function selectCoordinates() {
+  let tempMarkerIcon = L.icon({
+    iconUrl: "./pictures/tempmarker.png",
+    iconSize: [25, 42],
+  });
+  
   $("#eventWindow").modal("hide");
-  $(".toast").toast("show");
   let active = true;
+  if (tempMarker != undefined) {
+    mymap.removeLayer(tempMarker);
+  };
   document.getElementById("mapid").style.cursor =
     "url('/pictures/pin_icon.svg'), auto";
 
@@ -365,6 +378,7 @@ function selectCoordinates() {
         let lng = coord.lng;
         $("#latitude").text(lat);
         $("#longitude").text(lng);
+        tempMarker = new L.marker([lat,lng], {icon: tempMarkerIcon}).addTo(mymap);
         $("#eventWindow").modal("show");
         active = false;
         document.getElementById("mapid").style.cursor = "auto";
@@ -394,7 +408,7 @@ function addEvent() {
       description: eventDescription,
       longitude: longitude,
       latitude: latitude,
-      timestamp: timestamp,
+      timestamp: new Date(timestamp),
     });
     //empties forms
     document.getElementById("eventName").value = "";
@@ -402,6 +416,7 @@ function addEvent() {
     document.getElementById("longitude").innerHTML = "";
     document.getElementById("latitude").innerHTML = "";
     $("#eventWindow").modal("hide");
+    mymap.removeLayer(tempMarker);
   }
 }
 
@@ -432,8 +447,9 @@ $("#addEvent").append(`
       <button class="eventButtons btn btn-primary" onclick="selectCoordinates()">Select location</button>
       <p id="eventDateText">Event date</p>
       <input type="datetime-local" id="meeting-time"
-       name="meeting-time" value="2021-06-12T19:30"
-       min="2021-04-07T00:00" max="2030-06-14T00:00">
+       name="meeting-time"
+       min="2021-04-07T00:00" 
+       max="2030-06-14T00:00">
       <textarea
         name="event"
         id="eventDescription"
