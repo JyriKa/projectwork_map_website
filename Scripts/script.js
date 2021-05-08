@@ -439,7 +439,11 @@ function showEvents() {
 }
 
 function togglePastEvents() {
-  if ($("#eventSwitch").is(":checked")) {
+  if (
+    // Show past events when window is active and switch is checked
+    $("#eventSwitch").is(":checked") &&
+    $("#eventSwitch").hasClass("active")
+  ) {
     $("#past-events-div").show(200);
   } else {
     $("#past-events-div").hide(200);
