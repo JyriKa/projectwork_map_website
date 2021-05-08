@@ -262,27 +262,28 @@ function updateEvents() {
   let i = 0;
   const list = document.getElementById("events");
 
-  db.collection("Events").where("timestamp", ">", firebase.firestore.Timestamp.now()).onSnapshot((snapshot) => {
-    snapshot.docChanges().forEach((event) => {
-      const docData = event.doc.data();
-      let eventName = docData.name;
-      let eventDescription = docData.description;
-      const timestamp = docData.timestamp.toDate().toLocaleString();
-      const date = timestamp.split(" ")[0];
-      let longitude = docData.latitude;
-      let latitude = docData.longitude;
-      if(isNaN(longitude) && isNaN(latitude)){
-        longitude = 65.0115;
-        latitude = 25.468;
-        ;
-      }
-      eventName = eventName.replace(/\s|\n|&nbsp;/g, ' ');
-      eventName = eventName.replace(/<[^>]+>/gm, '');
-      eventDescription = eventDescription.replace(/\s|\n|&nbsp;/g, ' ');
-      eventDescription = eventDescription.replace(/<[^>]+>/gm, '');
+  db.collection("Events")
+    .where("timestamp", ">", firebase.firestore.Timestamp.now())
+    .onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((event) => {
+        const docData = event.doc.data();
+        let eventName = docData.name;
+        let eventDescription = docData.description;
+        const timestamp = docData.timestamp.toDate().toLocaleString();
+        const date = timestamp.split(" ")[0];
+        let longitude = docData.latitude;
+        let latitude = docData.longitude;
+        if (isNaN(longitude) && isNaN(latitude)) {
+          longitude = 65.0115;
+          latitude = 25.468;
+        }
+        eventName = eventName.replace(/\s|\n|&nbsp;/g, " ");
+        eventName = eventName.replace(/<[^>]+>/gm, "");
+        eventDescription = eventDescription.replace(/\s|\n|&nbsp;/g, " ");
+        eventDescription = eventDescription.replace(/<[^>]+>/gm, "");
 
-      const listItem = document.createElement("li");
-      const card = `
+        const listItem = document.createElement("li");
+        const card = `
           <div class="card" style="width: 17rem">
             <div class="card-body event-card" href="#collapse${i}"data-toggle="collapse">
               <div class="card-title"><h5>${date}</h3><h3>${eventName}</h3>
@@ -295,44 +296,122 @@ function updateEvents() {
             </div>
           </div>
             `;
-      listItem.innerHTML = card;
+        listItem.innerHTML = card;
 
-      let marker = L.marker([longitude, latitude], { icon: eventMarkerIcon }).addTo(
-        mymap
-      );
+        let marker = L.marker([longitude, latitude], {
+          icon: eventMarkerIcon,
+        }).addTo(mymap);
 
-      marker.placeName = eventName;
-      marker.collapseIndex = "#eventCollapse" + i;
-      const popUpText =
-        `<h3>${eventName}</h3>
+        marker.placeName = eventName;
+        marker.collapseIndex = "#eventCollapse" + i;
+        const popUpText = `<h3>${eventName}</h3>
         <p">${eventDescription}</p>`;
-      marker.bindPopup(popUpText);
+        marker.bindPopup(popUpText);
 
-      marker.addEventListener("click", function () {
-        mymap.flyTo([longitude, latitude], 16);
-        listItem.scrollIntoView({ behavior: "smooth", block: "start" });
-        console.log(marker.collapseIndex);
-        $(marker.collapseIndex).collapse("show");
+        marker.addEventListener("click", function () {
+          mymap.flyTo([longitude, latitude], 16);
+          listItem.scrollIntoView({ behavior: "smooth", block: "start" });
+          console.log(marker.collapseIndex);
+          $(marker.collapseIndex).collapse("show");
+        });
+
+        listItem.addEventListener("click", function () {
+          marker.openPopup();
+          mymap.flyTo([longitude, latitude], 16);
+        });
+
+        list.appendChild(listItem);
+        i++;
       });
-
-      listItem.addEventListener("click", function () {
-        marker.openPopup();
-        mymap.flyTo([longitude, latitude], 16);
-      });
-
-      list.appendChild(listItem);
-      i++;
     });
+}
+
+function updatePastEvents() {
+  let eventMarkerIcon = L.icon({
+    iconUrl: "./pictures/marker.png",
+    iconSize: [25, 42], // size of the icon
   });
+  let i = 0;
+  const list = document.getElementById("past-events");
+
+  db.collection("Events")
+    .where("timestamp", "<", firebase.firestore.Timestamp.now())
+    .onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((event) => {
+        const docData = event.doc.data();
+        let eventName = docData.name;
+        let eventDescription = docData.description;
+        const timestamp = docData.timestamp.toDate().toLocaleString();
+        const date = timestamp.split(" ")[0];
+        let longitude = docData.latitude;
+        let latitude = docData.longitude;
+        if (isNaN(longitude) && isNaN(latitude)) {
+          longitude = 65.0115;
+          latitude = 25.468;
+        }
+        eventName = eventName.replace(/\s|\n|&nbsp;/g, " ");
+        eventName = eventName.replace(/<[^>]+>/gm, "");
+        eventDescription = eventDescription.replace(/\s|\n|&nbsp;/g, " ");
+        eventDescription = eventDescription.replace(/<[^>]+>/gm, "");
+
+        const listItem = document.createElement("li");
+        const card = `
+          <div class="card" style="width: 17rem">
+            <div class="card-body event-card" href="#collapse-${i}"data-toggle="collapse">
+              <div class="card-title"><h5>${date}</h3><h3>${eventName}</h3>
+              </div>
+              <div id="collapse-${i}" class="collapse">
+                <p style="font-size: medium">${timestamp}
+                <p style="font-size: medium">${eventDescription}
+                <br>
+              </div>
+            </div>
+          </div>
+            `;
+        listItem.innerHTML = card;
+
+        // Removed markers for now because there is no function to toggle past event markers
+        /*
+        let marker = L.marker([longitude, latitude], {
+          icon: eventMarkerIcon,
+        }).addTo(mymap);
+
+        marker.placeName = eventName;
+        marker.collapseIndex = "#eventCollapse" + i;
+        const popUpText = `<h3>${eventName}</h3>
+        <p">${eventDescription}</p>`;
+        marker.bindPopup(popUpText);
+
+        marker.addEventListener("click", function () {
+          mymap.flyTo([longitude, latitude], 16);
+          listItem.scrollIntoView({ behavior: "smooth", block: "start" });
+          console.log(marker.collapseIndex);
+          $(marker.collapseIndex).collapse("show");
+        });
+
+        listItem.addEventListener("click", function () {
+          marker.openPopup();
+          mymap.flyTo([longitude, latitude], 16);
+        });*/
+
+        list.appendChild(listItem);
+        i++;
+      });
+    });
 }
 
 addListItems();
 updateEvents();
+updatePastEvents();
 
 function showLocations() {
   $("#list-items").toggle(300);
   $("#events").toggle(300);
   $("#eventButton").toggle(300);
+  $("#locations-title").toggle(300);
+  $("#events-title").toggle(300);
+  $("#upcoming-events-title").toggle(300);
+  $("#switch").toggle(300);
 
   // Remove active and disabled class from other navbar item
   $(".navbar-nav").find(".active").removeClass("active");
@@ -346,6 +425,10 @@ function showEvents() {
   $("#list-items").toggle(300);
   $("#events").toggle(300);
   $("#eventButton").toggle(300);
+  $("#locations-title").toggle(300);
+  $("#events-title").toggle(300);
+  $("#upcoming-events-title").toggle(300);
+  $("#switch").toggle(300);
 
   // Remove active and disabled class from other navbar item
   $(".navbar-nav").find(".active").removeClass("active");
@@ -355,17 +438,25 @@ function showEvents() {
   $("#showEvents").addClass("disabled");
 }
 
+function togglePastEvents() {
+  if ($("#eventSwitch").is(":checked")) {
+    $("#past-events-div").show(200);
+  } else {
+    $("#past-events-div").hide(200);
+  }
+}
+
 function selectCoordinates() {
   let tempMarkerIcon = L.icon({
     iconUrl: "./pictures/tempmarker.png",
     iconSize: [25, 42],
   });
-  
+
   $("#eventWindow").modal("hide");
   let active = true;
   if (tempMarker != undefined) {
     mymap.removeLayer(tempMarker);
-  };
+  }
   document.getElementById("mapid").style.cursor =
     "url('/pictures/pin_icon.svg'), auto";
 
@@ -378,7 +469,9 @@ function selectCoordinates() {
         let lng = coord.lng;
         $("#latitude").text(lat);
         $("#longitude").text(lng);
-        tempMarker = new L.marker([lat,lng], {icon: tempMarkerIcon}).addTo(mymap);
+        tempMarker = new L.marker([lat, lng], { icon: tempMarkerIcon }).addTo(
+          mymap
+        );
         $("#eventWindow").modal("show");
         active = false;
         document.getElementById("mapid").style.cursor = "auto";
@@ -386,6 +479,10 @@ function selectCoordinates() {
     },
     { once: true }
   );
+  // Remove temp marker if modal is closed before submitting
+  $("#eventWindow").on("hide.bs.modal", function () {
+    mymap.removeLayer(tempMarker);
+  });
 }
 
 function addEvent() {

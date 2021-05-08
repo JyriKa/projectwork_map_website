@@ -78,20 +78,26 @@
       <div class="leftAndRight">
         <div class="left-side">
           <div class="left-flex">
+            <div class="titles">
+              <h4 id="locations-title">Important places in Oulu</h4>
+              <h4 id="events-title">Events in Oulu</h4>
+              <div class="switch-div" id="switch">
+                Show past events &nbsp;
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    id="eventSwitch"
+                    onchange="togglePastEvents()"
+                  />
+                  <span class="slider round"></span>
+                </label>
+              </div>
+              <h5 id="upcoming-events-title">Upcoming events</h5>
+            </div>
             <div class="left-up">
               <ul class="list-places" id="list-items"></ul>
               <ul class="list-places" id="events" style="display: none">
                 <li id="addEvent"></li>
-                <h4
-                  style="
-                    color: black;
-                    font-size: x-large;
-                    font-style: oblique;
-                    margin-top: 15px;
-                  "
-                >
-                  Upcoming events
-                </h4>
               </ul>
               <div>
                 <button
@@ -104,6 +110,14 @@
                 >
                   Add a new event
                 </button>
+              </div>
+              <div id="past-events-div" style="display: none">
+                <h5 id="past-events-title">Past events</h5>
+                <ul
+                  class="list-places"
+                  id="past-events"
+                  style="display: block"
+                ></ul>
               </div>
             </div>
           </div>
