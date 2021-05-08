@@ -479,6 +479,10 @@ function selectCoordinates() {
     },
     { once: true }
   );
+  // Remove temp marker if modal is closed before submitting
+  $("#eventWindow").on("hide.bs.modal", function () {
+    mymap.removeLayer(tempMarker);
+  });
 }
 
 function addEvent() {
