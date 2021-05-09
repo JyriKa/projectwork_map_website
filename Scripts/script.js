@@ -404,6 +404,18 @@ addListItems();
 updateEvents();
 updatePastEvents();
 
+function togglePastEvents() {
+  if (
+    // Show past events when window is active and switch is checked
+    $("#eventSwitch").is(":checked") &&
+    $("#showEvents").hasClass("active")
+  ) {
+    $("#past-events-div").show(200);
+  } else {
+    $("#past-events-div").hide(200);
+  }
+}
+
 function showLocations() {
   $("#list-items").toggle(300);
   $("#events").toggle(300);
@@ -419,6 +431,8 @@ function showLocations() {
   // Disable this nav item by adding active and disabled class to navbar item
   $("#showLocations").addClass("active");
   $("#showLocations").addClass("disabled");
+
+  togglePastEvents();
 }
 
 function showEvents() {
@@ -436,14 +450,8 @@ function showEvents() {
   // Disable this nav item by adding active and disabled class to navbar item
   $("#showEvents").addClass("active");
   $("#showEvents").addClass("disabled");
-}
 
-function togglePastEvents() {
-  if ($("#eventSwitch").is(":checked")) {
-    $("#past-events-div").show(200);
-  } else {
-    $("#past-events-div").hide(200);
-  }
+  togglePastEvents();
 }
 
 function selectCoordinates() {
