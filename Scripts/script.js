@@ -40,6 +40,8 @@ function addComment(event) {
     //empties forms
     document.getElementById("username" + i).value = "";
     document.getElementById("comment" + i).value = "";
+  } else {
+    alert("Fill all fields!");
   }
 }
 
@@ -406,7 +408,7 @@ updatePastEvents();
 
 function togglePastEvents() {
   if (
-    // Show past events when window is active and switch is checked
+    // Show past events when events window is active and switch is checked
     $("#eventSwitch").is(":checked") &&
     $("#showEvents").hasClass("active")
   ) {
@@ -522,6 +524,15 @@ function addEvent() {
     document.getElementById("latitude").innerHTML = "";
     $("#eventWindow").modal("hide");
     mymap.removeLayer(tempMarker);
+  } else if (
+    eventName !== "" &&
+    eventDescription !== "" &&
+    longitude === "" &&
+    latitude === ""
+  ) {
+    alert("Select location!");
+  } else {
+    alert("Fill all fields!");
   }
 }
 
