@@ -40,6 +40,8 @@ function addComment(event) {
     //empties forms
     document.getElementById("username" + i).value = "";
     document.getElementById("comment" + i).value = "";
+  } else {
+    alert("Fill all fields!");
   }
 }
 
@@ -404,6 +406,18 @@ addListItems();
 updateEvents();
 updatePastEvents();
 
+function togglePastEvents() {
+  if (
+    // Show past events when events window is active and switch is checked
+    $("#eventSwitch").is(":checked") &&
+    $("#showEvents").hasClass("active")
+  ) {
+    $("#past-events-div").show(200);
+  } else {
+    $("#past-events-div").hide(200);
+  }
+}
+
 function showLocations() {
   $("#list-items").toggle(300);
   $("#events").toggle(300);
@@ -419,6 +433,8 @@ function showLocations() {
   // Disable this nav item by adding active and disabled class to navbar item
   $("#showLocations").addClass("active");
   $("#showLocations").addClass("disabled");
+
+  togglePastEvents();
 }
 
 function showEvents() {
@@ -436,14 +452,8 @@ function showEvents() {
   // Disable this nav item by adding active and disabled class to navbar item
   $("#showEvents").addClass("active");
   $("#showEvents").addClass("disabled");
-}
 
-function togglePastEvents() {
-  if ($("#eventSwitch").is(":checked")) {
-    $("#past-events-div").show(200);
-  } else {
-    $("#past-events-div").hide(200);
-  }
+  togglePastEvents();
 }
 
 function selectCoordinates() {
@@ -514,6 +524,15 @@ function addEvent() {
     document.getElementById("latitude").innerHTML = "";
     $("#eventWindow").modal("hide");
     mymap.removeLayer(tempMarker);
+  } else if (
+    eventName !== "" &&
+    eventDescription !== "" &&
+    longitude === "" &&
+    latitude === ""
+  ) {
+    alert("Select location!");
+  } else {
+    alert("Fill all fields!");
   }
 }
 
