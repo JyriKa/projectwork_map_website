@@ -37,6 +37,8 @@ const places = [
     longitude: 65.01329,
     latitude: 25.46471,
     address: "Kauppatori 2, 90100 Oulu",
+    picture:
+      "./pictures/toripolliisi.jpg",
   },
   {
     name: "Matkahuolto",
@@ -65,6 +67,8 @@ const places = [
     address: "Kaarlenväylä 3, 90100 Oulu",
     businesshours:
       "Monday-Friday: 8:30am-8pm\nSaturday: 9am-4pm\nSunday: 12pm-4pm",
+    picture:
+      "./pictures/main_library.jpg",
   },
   {
     name: "Public traffic",
@@ -84,6 +88,8 @@ const places = [
     address: "Valtatie 49, 90500 Oulu",
     businesshours:
       "Jussin Pyöräpiste\nMonday-Friday: 9am-6pm\nSaturday: 9am-2pm",
+    picture:
+      "./pictures/jussin_pyorapiste.jpg",
   },
   {
     name: "YTHS",
