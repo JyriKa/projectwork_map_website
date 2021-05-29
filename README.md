@@ -1,5 +1,6 @@
 # projectwork_map_website
 
+This application only works on chromium based browsers!
 
 Web-application - HTML, CSS, Javascript
 - Leaflet library, Leaflet’s layers are used to add markers and popups
