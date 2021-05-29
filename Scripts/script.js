@@ -2,6 +2,7 @@
 firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 
+// Focuses map on to the center of Oulu
 const mymap = L.map("mapid").setView([65.03777732, 25.45506727], 13);
 
 let tempMarker;
@@ -19,25 +20,27 @@ L.tileLayer(
   }
 ).addTo(mymap);
 
+// Adds fullscreen option to map
 mymap.addControl(new L.Control.Fullscreen());
 L.control.locate().addTo(mymap);
 
 const placeElements = new Array();
 
+// Adds a comment to firebase
 function addComment(event) {
   const placeName = event.target.getAttribute("data-location");
   const i = event.target.getAttribute("i");
   const username = document.getElementById("username" + i).value;
   const comment = document.getElementById("comment" + i).value;
-  //doesn't post if forms are empty
+  // Doesn't post if forms are empty
   if (username !== "" && comment !== "") {
-    //adds a comment to firestore
+    // Adds a comment to firestore
     db.collection(placeName).add({
       timestamp: new Date().toLocaleString(),
       username: username,
       comment: comment,
     });
-    //empties forms
+    // Empties forms
     document.getElementById("username" + i).value = "";
     document.getElementById("comment" + i).value = "";
   } else {
@@ -45,6 +48,7 @@ function addComment(event) {
   }
 }
 
+// Creates a comment box for a single comment
 function createCommentBox(placeId, username, date, commentBody, index) {
   let commentBox = `
             <div class="comment-box" id ="comment-box-${index}">
@@ -64,6 +68,7 @@ function createCommentBox(placeId, username, date, commentBody, index) {
   return commentBox;
 }
 
+// Fetches comments from firebase
 function updateComments(event) {
   const clickedElement = event.target;
   if (clickedElement.getAttribute("data-listening") !== null) return;
@@ -107,15 +112,18 @@ function updateComments(event) {
   });
 }
 
+// Adds the location information to the cards
 function addInforToCards() {
   for (let i = 0; i < placeElements.length; i++) {
     const element = placeElements[i];
     const placeId = places[i];
 
+    // Creates a marker on map
     let marker = L.marker([placeId["longitude"], placeId["latitude"]]).addTo(
       mymap
     );
 
+    // Popup for marker
     marker.placeId = placeId;
     marker.placeName = placeId["name"];
     marker.collapseIndex = "#collapse" + i;
@@ -123,6 +131,7 @@ function addInforToCards() {
       "<h3>" + placeId["name"] + "</h3>" + "<p>" + placeId["address"] + "</p>";
     marker.bindPopup(popUpText);
 
+    // Focuses the map on a marker when user clicks a marker
     marker.addEventListener("click", function () {
       mymap.flyTo([placeId["longitude"], placeId["latitude"]], 16);
       element.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -130,6 +139,7 @@ function addInforToCards() {
       $(marker.collapseIndex).collapse("show");
     });
 
+    // Flies to the marker when user clicks a card
     element.addEventListener("click", function () {
       marker.openPopup();
       mymap.flyTo([placeId["longitude"], placeId["latitude"]], 16);
@@ -189,7 +199,7 @@ function addListItems() {
 
     placeElements.push(listItem);
 
-    //adds functionality to created buttons
+    // Adds functionality to created buttons
     const openCommentsButton = document.getElementById("openButton" + i);
     openCommentsButton.addEventListener("click", updateComments);
     const addCommentButton = document.getElementById("addComment" + i);
@@ -257,6 +267,7 @@ function createModal(i) {
 }
 
 function updateEvents() {
+  // Marker for events
   let eventMarkerIcon = L.icon({
     iconUrl: "./pictures/marker.png",
     iconSize: [25, 42], // size of the icon
@@ -264,6 +275,7 @@ function updateEvents() {
   let i = 0;
   const list = document.getElementById("events");
 
+  // Fetches events from Firebase. 
   db.collection("Events")
     .where("timestamp", ">", firebase.firestore.Timestamp.now())
     .onSnapshot((snapshot) => {
@@ -279,6 +291,7 @@ function updateEvents() {
           longitude = 65.0115;
           latitude = 25.468;
         }
+        // Tries to sanitize texts
         eventName = eventName.replace(/\s|\n|&nbsp;/g, " ");
         eventName = eventName.replace(/<[^>]+>/gm, "");
         eventDescription = eventDescription.replace(/\s|\n|&nbsp;/g, " ");
@@ -300,23 +313,25 @@ function updateEvents() {
             `;
         listItem.innerHTML = card;
 
+        // Creates a marker
         let marker = L.marker([longitude, latitude], {
           icon: eventMarkerIcon,
         }).addTo(mymap);
-
         marker.placeName = eventName;
         marker.collapseIndex = "#eventCollapse" + i;
         const popUpText = `<h3>${eventName}</h3>
         <p">${eventDescription}</p>`;
         marker.bindPopup(popUpText);
 
+        // Focuses the map on a marker when user clicks a marker
         marker.addEventListener("click", function () {
           mymap.flyTo([longitude, latitude], 16);
           listItem.scrollIntoView({ behavior: "smooth", block: "start" });
           console.log(marker.collapseIndex);
           $(marker.collapseIndex).collapse("show");
         });
-
+        
+        // Flies to the marker when user clicks a card
         listItem.addEventListener("click", function () {
           marker.openPopup();
           mymap.flyTo([longitude, latitude], 16);
@@ -329,6 +344,7 @@ function updateEvents() {
 }
 
 function updatePastEvents() {
+  // Marker for events
   let eventMarkerIcon = L.icon({
     iconUrl: "./pictures/marker.png",
     iconSize: [25, 42], // size of the icon
@@ -336,6 +352,7 @@ function updatePastEvents() {
   let i = 0;
   const list = document.getElementById("past-events");
 
+  // Fetches events that have already expired
   db.collection("Events")
     .where("timestamp", "<", firebase.firestore.Timestamp.now())
     .onSnapshot((snapshot) => {
@@ -351,6 +368,7 @@ function updatePastEvents() {
           longitude = 65.0115;
           latitude = 25.468;
         }
+        // Tries to sanitize texts
         eventName = eventName.replace(/\s|\n|&nbsp;/g, " ");
         eventName = eventName.replace(/<[^>]+>/gm, "");
         eventDescription = eventDescription.replace(/\s|\n|&nbsp;/g, " ");
@@ -418,6 +436,7 @@ function togglePastEvents() {
   }
 }
 
+// Shows location cards
 function showLocations() {
   $("#list-items").toggle(300);
   $("#events").toggle(300);
@@ -437,6 +456,7 @@ function showLocations() {
   togglePastEvents();
 }
 
+// Shows event cards
 function showEvents() {
   $("#list-items").toggle(300);
   $("#events").toggle(300);
@@ -456,20 +476,24 @@ function showEvents() {
   togglePastEvents();
 }
 
+// User selects coordinates when choosing a location for an event
 function selectCoordinates() {
   let tempMarkerIcon = L.icon({
     iconUrl: "./pictures/tempmarker.png",
     iconSize: [25, 42],
   });
 
+  // Closes event creation modal
   $("#eventWindow").modal("hide");
   let active = true;
   if (tempMarker != undefined) {
     mymap.removeLayer(tempMarker);
   }
+  // Changes cursor icon
   document.getElementById("mapid").style.cursor =
-    "url('/pictures/pin_icon.svg'), auto";
+    "url('./pictures/pin_icon.svg'), auto";
 
+  // Picks up coordinates on click
   mymap.addEventListener(
     "click",
     function (e) {
@@ -495,6 +519,7 @@ function selectCoordinates() {
   });
 }
 
+// Adds a new event to firebase
 function addEvent() {
   const eventName = document.getElementById("eventName").value;
   const eventDescription = document.getElementById("eventDescription").value;
@@ -502,14 +527,14 @@ function addEvent() {
   const latitude = document.getElementById("latitude").innerHTML;
   const timestamp = document.getElementById("meeting-time").value;
 
-  //doesn't post if forms are empty
+  // Doesn't post if forms are empty
   if (
     eventName !== "" &&
     eventDescription !== "" &&
     longitude !== "" &&
     latitude !== ""
   ) {
-    //adds a comment to firestore
+    // Adds a comment to firestore
     db.collection("Events").add({
       name: eventName,
       description: eventDescription,
@@ -517,7 +542,7 @@ function addEvent() {
       latitude: latitude,
       timestamp: new Date(timestamp),
     });
-    //empties forms
+    // Empties forms
     document.getElementById("eventName").value = "";
     document.getElementById("eventDescription").value = "";
     document.getElementById("longitude").innerHTML = "";
@@ -530,15 +555,19 @@ function addEvent() {
     longitude === "" &&
     latitude === ""
   ) {
+    // Alerts user if location is not selected
     alert("Select location!");
   } else {
+    // Alerts user if all fields are not filled
     alert("Fill all fields!");
   }
 }
 
+// Modal for event creation
 $("#addEvent").append(`
 <div class="modal fade" id="eventWindow" tabindex="-1" role="dialog" aria-labelledby="eventWindowLabel" aria-hidden="true">
 <div class="modal-dialog" role="document">
+
   <div class="modal-content">
     <div class="modal-header">
       <h3 class="modal-title w-100 text-center id="eventWindow>Add new event</h3>
@@ -546,6 +575,7 @@ $("#addEvent").append(`
         <span aria-hidden="true">&times;</span>
       </button>
   </div>
+
     <div class="modal-body">
     <p class="event-title"><i>Add a new event to your chosen location</i></p>
       <div class="event-form">
@@ -558,9 +588,11 @@ $("#addEvent").append(`
         name="Name of event"
         /><br />
       </form>
+
       <div id="latitude" style="color: black"></div>
       <div id="longitude" style="color: black"></div>
       <button class="eventButtons btn btn-primary" onclick="selectCoordinates()">Select location</button>
+
       <p id="eventDateText">Event date</p>
       <input type="datetime-local" id="meeting-time"
        name="meeting-time"
@@ -572,11 +604,13 @@ $("#addEvent").append(`
         placeholder="Description"
         form="event-form"
       ></textarea>
+
       <button
         type="button"
         class="eventButtons btn btn-primary" 
         onclick="addEvent()"
       >Submit</button>
+
     </div>
       </div>
     </div>
